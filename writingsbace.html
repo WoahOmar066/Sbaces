@@ -1,0 +1,4120 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sbases</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://utils.marifyt.com/css/config.css">
+    <link rel="icon" type="image/x-icon" href="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fpage2.png&color=c0dff0">
+</head>
+<style>
+    :root {
+        --bg-primary: #141414;
+        --bg-secondary: #1a1a1a;
+        --sidebar-width: 275px;
+        --sidebar-collapsed-width: 50px;
+        --content-width: 1150px;
+        --text-color: #ffffff;
+        --border-color: #2e2e2e;
+        --header-height: 56px;
+        --toolbar-height: 48px;
+        --logo-color: #c0dff0;
+        --toolbar-color: #141414fb;
+        --stat-bg-color: #ffffff;
+        --stat-text-color: #000000;
+    }
+
+    [data-theme="light"] {
+        --toolbar-color: #fffffffb;
+        --bg-primary: #ffffff;
+        --bg-secondary: #dbdbdb;
+        --text-color: #333333;
+        --border-color: #979797;
+        --stat-bg-color: #000000;
+        --stat-text-color: #ffffff;
+    }
+
+    [data-theme="light"] .nav-icon,
+    [data-theme="light"] #theme-icon,
+    [data-theme="light"] .tool-btn img,
+    [data-theme="light"] .sidebar-toggle-icon,
+    [data-theme="light"] .nav-options img,
+    [data-theme="light"] .view-btn.active img,
+    [data-theme="light"] .right-icon,
+    [data-theme="light"] .download-btn {
+        filter: invert(0.55);
+    }
+
+    [data-theme="light"] .options-bar img {
+        filter: invert(0);
+    }
+
+    [data-theme="light"] .nav-link.active {
+        color: black !important;
+    }
+
+    [data-theme="light"] .home-btn.active {
+        color: black !important;
+    }
+
+    [data-theme="light"] .logo-text {
+        color: #000000 !important;
+    }
+
+    [data-theme="light"] .logo-icon {
+        content: url('https://utils.marifyt.com/api/assets?image=%2Ficons%2Fpage2.png&color=6ab6f0');
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'DM Sans', sans-serif !important;
+    }
+
+    body {
+        background-color: var(--bg-primary);
+        color: var(--text-color);
+        line-height: 1.35;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 10001;
+        animation: fadeIn 0.2s ease-out;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+    /* Blur background when any modal is shown */
+    body:has(.modal-overlay.show) .layout,
+    body:has(.modal-overlay.show) .header-icons {
+        filter: blur(1.3px);
+        transition: filter 0.2s ease;
+    }
+
+    /* Ensure the modal overlay itself is not blurred */
+    .modal-overlay {
+        filter: none !important;
+    }
+
+    .modal-overlay.show {
+        filter: none !important;
+    }
+
+    .modal-content {
+        background-color: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        padding: 13px;
+        min-width: 300px;
+        max-width: 400px;
+        animation: slideUp 0.2s ease-out;
+        zoom: 130%;
+    }
+
+    .modal-content.trash-modal {
+        max-width: 600px;
+        min-width: 500px;
+    }
+
+    .modal-title {
+        color: var(--text-color);
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .modal-message {
+        color: #97979f;
+        font-size: 14px;
+        font-weight: 400;
+        margin-bottom: 20px;
+        line-height: 1.4;
+    }
+
+    .modal-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background-color: transparent;
+        color: var(--text-color);
+        font-size: 14px;
+        margin-bottom: 20px;
+        outline: none;
+    }
+
+    .modal-input:focus {
+        border: 1px solid var(--border-color);
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+    }
+
+    .modal-btn {
+        padding: 8px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.3s ease;
+        background-color: transparent;
+    }
+
+    .modal-btn.cancel {
+        color: #97979f;
+    }
+
+    .modal-btn.cancel:hover {
+        color: var(--text-color);
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .modal-btn.confirm {
+        color: black;
+        background-color: white;
+    }
+
+    .modal-btn.confirm:hover {
+        background-color: transparent;
+        border: 1px solid white;
+        color: white;
+    }
+
+    .modal-btn.danger {
+        color: white;
+        background-color: #ff6b6b;
+    }
+
+    .modal-btn.danger:hover {
+        background-color: transparent;
+        border: 1px solid #ff6b6b;
+        color: #ff6b6b;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { 
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Find and Replace specific styles */
+    .find-counter {
+        color: #646466;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .quick-find-overlay {
+        position: absolute;
+        top: 50%;
+        right: calc(100% + 8px);
+        transform: translateY(-50%);
+        border-radius: 8px;
+        padding: 8px;
+        display: none;
+        z-index: 10000;
+        animation: fadeInRight 0.2s ease-out;
+        min-width: 200px;
+        pointer-events: auto; /* Ensure it can receive events */
+    }
+
+    .quick-find-overlay.show {
+        display: flex;
+        align-items: center;
+    }
+
+    .quick-find-input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        margin-right: -8px;
+    }
+
+    .quick-find-input {
+        padding: 6px 10px; /* Remove right padding since arrow is outside */
+        border: 1px solid var(--border-color);
+        border-radius: 9px; /* Only round left corners */
+        background-color: transparent;
+        color: var(--text-color);
+        font-size: 15px;
+        outline: none;
+        width: 200px;
+        position: relative;
+    }
+
+    .quick-find-input-container::after {
+        content: '';
+        width: 0;
+        height: 0;
+        border-left: 8px solid var(--border-color);
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        margin-left: -1px; /* Overlap the border to connect */
+    }
+
+    /* Light theme */
+    [data-theme="light"] .quick-find-input-container::after {
+        border-left-color: var(--border-color);
+    }
+
+    /* Prevent hover effects when overlay is open */
+    .tool-btn.find-open:hover {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .tool-btn.find-open:hover img {
+        filter: brightness(1.5) !important;
+    }
+
+    /* Trash Modal Content */
+    .trash-content {
+        max-height: 400px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+    }
+
+    .trash-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px 0;
+        margin-bottom: 8px;
+    }
+
+    .trash-item-info {
+        flex-grow: 1;
+    }
+
+    .trash-item-name {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 4px;
+    }
+
+    .trash-item-date {
+        font-size: 12px;
+        color: #97979f;
+    }
+
+    .trash-item-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .trash-btn-small {
+        padding: 6px 11px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.3s ease;
+        background-color: transparent;
+    }
+
+    .trash-btn-small.restore {
+        background-color: #4ade80;
+    }
+
+    .trash-btn-small.restore:hover {
+        opacity: 0.8;
+    }
+
+    .trash-btn-small.delete {
+        background-color: #ff6b6b;
+    }
+
+    .trash-btn-small.delete:hover {
+        opacity: 0.8;
+    }
+
+    /* Download Dropdown */
+    .download-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        background-color: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 5px;
+        display: none;
+        z-index: 1000;
+        animation: fadeInDown 0.2s ease-out;
+    }
+
+    .download-dropdown.show {
+        display: block;
+    }
+
+    .download-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 8px 12px;
+        background: none;
+        border: none;
+        border-radius: 8px;
+        color: #97979f;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.3s ease;
+        text-align: left;
+    }
+
+    .download-option:hover {
+        color: var(--text-color);
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .download-option img {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* Toast Notification */
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: var(--text-color);
+        font-size: 14px;
+        font-weight: 500;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+        z-index: 10002;
+    }
+
+    .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Options bar styles */
+    .options-bar {
+        position: absolute;
+        top: 50%;
+        right: calc(100% + 8px);
+        transform: translateY(-50%);
+        display: none;
+        align-items: center;
+        background-color: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 4px;
+        gap: 4px;
+        z-index: 1000;
+        animation: fadeInRight 0.2s ease-out;
+    }
+
+    .options-bar::after {
+        content: '';
+        position: absolute;
+        left: calc(100%);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-left: 6px solid var(--border-color);
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+    }
+
+    .options-bar::before {
+        content: '';
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-left: 5px solid var(--bg-primary);
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        z-index: 1001;
+    }
+
+    .options-bar.show {
+        display: flex;
+    }
+
+    .options-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        padding: 6px;
+        background: none;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s ease;
+        position: relative;
+    }
+
+    .options-item img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .options-item:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .layout {
+        display: flex;
+        height: 100vh;
+        width: calc(var(--sidebar-width) + var(--content-width));
+        margin: 0 auto;
+        transition: width 0.3s ease;
+    }
+
+    .layout.collapsed {
+        width: calc(var(--sidebar-collapsed-width) + var(--content-width));
+    }
+
+    .header-icons {
+        position: fixed;
+        top: 0;
+        right: 4px;
+        padding: 12px;
+        display: flex;
+        gap: 8px;
+        z-index: 100;
+    }
+
+    .theme-toggle {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: none;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar {
+        width: var(--sidebar-width);
+        background-color: var(--bg-primary);
+        border-right: 1px solid var(--border-color);
+        border-left: 1px solid var(--border-color);
+        height: 100%;
+        position: relative;
+        transition: width 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-nav {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .sidebar.collapsed {
+        width: var(--sidebar-collapsed-width);
+    }
+
+    .sidebar-fixed-buttons {
+        padding: 8px 0 8px 0;
+        flex-shrink: 0; /* Don't shrink */
+    }
+
+    .sidebar.collapsed .sidebar-fixed-buttons {
+        border-bottom: none;
+    }
+
+    .sidebar.collapsed .nav-section:not(.collapsed-visible) {
+        display: none;
+    }
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        height: 56px;
+        justify-content: space-between;
+    }
+
+    .logo-section {
+        display: flex;
+        align-items: center;
+    }
+
+    .logo-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+    }
+
+    .logo-text {
+        color: var(--text-color);
+        font-weight: 900;
+        font-size: 27px;
+        text-shadow: 1.3px 1.3px #47bfff;
+    }
+
+    .sidebar-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: 0.2s ease;
+        margin-top: 5px;
+        position: relative;
+    }
+
+    .sidebar-toggle:hover {
+        filter: brightness(1.25);
+    }
+
+    .sidebar-toggle-icon {
+        width: 22px;
+        height: 22px;
+    }
+
+    .sidebar.collapsed .logo-text,
+    .sidebar.collapsed .nav-text,
+    .sidebar.collapsed .nav-section-header,
+    .sidebar.collapsed .logo-icon {
+        display: none;
+    }
+
+    .sidebar.collapsed .logo-container {
+        justify-content: center;
+        padding: 12px 8px;
+    }
+
+    .sidebar-nav {
+        padding: 8px 0;
+        flex: 1; /* Take remaining space */
+        overflow-y: auto; /* Add scrolling here */
+        overflow-x: hidden;
+    }
+
+    /* Move the scrollbar styling from .sidebar to .sidebar-nav */
+    .sidebar-nav::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb {
+        background-color: #414141a1;
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
+    }
+
+    .nav-section {
+        margin-bottom: 24px;
+    }
+
+    .nav-section-header {
+        padding: 0 20px 8px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar.collapsed .nav-section {
+        margin-bottom: 8px;
+    }
+
+    .nav-section-header .star-icon {
+        margin-right: 6px;
+        font-size: 16px;
+    }
+
+    .nav-item {
+        padding: 0 8px;
+        position: relative;
+    }
+
+    .sidebar.collapsed .nav-item {
+        padding: 0 4px;
+        margin-bottom: 8px;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 9px;
+        color: #97979f;
+        text-decoration: none;
+        font-size: 16px;
+        transition: background-color 0.2s;
+        position: relative;
+        justify-content: flex-start;
+    }
+
+    .sidebar.collapsed .nav-link {
+        justify-content: center;
+        padding: 10px 8px;
+    }
+
+    .nav-link:hover {
+        background-color: var(--bg-secondary);
+    }
+
+    .nav-link.active {
+        background-color: var(--bg-secondary);
+        font-weight: 600;
+        color: white;
+        padding-right: 0;
+        left: 8px;
+        padding-left: 12px;
+        border-radius: 10px 0 0 10px;
+    }
+
+    .nav-link.active .nav-icon {
+        opacity: 1;
+    }
+
+    .nav-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+        opacity: 0.5;
+    }
+
+    .sidebar.collapsed .nav-icon {
+        margin-right: 0;
+    }
+
+    .nav-options {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        opacity: 0;
+        transition: opacity 0.2s ease, background-color 0.2s ease;
+        cursor: pointer;
+        z-index: 10;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nav-item:hover .nav-options {
+        opacity: 1;
+    }
+
+    .nav-options:hover {
+        background-color: #1d1d1db4;
+    }
+
+    .nav-options img {
+        width: 18px;
+        height: 18px;
+        margin-left: 2px;
+        filter: brightness(1.5);
+    }
+
+    .sidebar.collapsed .nav-options {
+        display: none;
+    }
+
+    .new-space-btn, .home-btn, .trash-btn {
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 6px;
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 16px;
+        transition: background-color 0.2s;
+        background: none;
+        border: none;
+        width: 100%;
+        cursor: pointer;
+        justify-content: flex-start;
+        position: relative;
+    }
+
+    .sidebar.collapsed .new-space-btn,
+    .sidebar.collapsed .home-btn,
+    .sidebar.collapsed .trash-btn {
+        justify-content: center;
+        padding: 10px 8px;
+    }
+
+    .new-space-btn:hover, .home-btn:hover, .trash-btn:hover {
+        background-color: var(--bg-secondary);
+    }
+
+    .home-btn.active {
+        background-color: var(--bg-secondary);
+        font-weight: 500;
+        color: white;
+    }
+
+    .home-btn.active .nav-icon {
+        opacity: 1;
+    }
+
+    .new-space-btn .nav-icon, .home-btn .nav-icon, .trash-btn .nav-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+        opacity: 0.7;
+    }
+
+    .sidebar.collapsed .new-space-btn .nav-icon,
+    .sidebar.collapsed .home-btn .nav-icon,
+    .sidebar.collapsed .trash-btn .nav-icon {
+        margin-right: 0;
+    }
+
+    .sidebar.collapsed .home-btn img, .sidebar.collapsed .new-space-btn img, .sidebar.collapsed .trash-btn img {
+        filter: brightness(0.4);
+    }
+
+    .content {
+        flex-grow: 1;
+        width: var(--content-width);
+        background-color: var(--bg-primary);
+        border-right: 1px solid var(--border-color);
+        overflow-y: auto;
+        height: 100%;
+        position: relative;
+        padding-bottom: 100px;
+    }
+
+    .content-header {
+        padding: 12px 24px;
+        border-bottom: 1px solid var(--border-color);
+        height: var(--header-height);
+        font-size: 18px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        background-color: var(--bg-primary);
+        z-index: 100;
+    }
+
+    .title-text {
+        cursor: pointer;
+        transition: color 0.2s ease;
+        display: inline-block;
+        width: auto;
+        flex-shrink: 0;
+    }
+
+    .title-text:hover {
+        color: var(--logo-color);
+    }
+
+    .content.home .title-text {
+        cursor: default;
+    }
+
+    .content.home .title-text:hover {
+        color: var(--text-color);
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 4px;
+        margin-right: -5px;
+    }
+
+    .header-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s ease;
+        padding: 6px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header-btn img {
+        width: 20px;
+        height: 20px;
+        transition: 0.3s ease;
+    }
+
+    .header-btn:hover img {
+        filter: brightness(1.34);
+    }
+
+    .auto-save-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+        transition: background-color 0.25s ease;
+    }
+
+    .auto-save-indicator.unsaved {
+        background-color: #ff6b6b;
+    }
+
+    .auto-save-indicator.saved {
+        background-color: #4ade80;
+    }
+
+    .content.home .content-header {
+        cursor: default;
+    }
+
+    .content.home .content-header:hover {
+        color: var(--text-color);
+    }
+
+    .title-text {
+        flex-grow: 1;
+        width: 30%;
+    }
+
+    .auto-save-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 15px;
+        transition: background-color 0.25s ease;
+    }
+
+    .auto-save-indicator.unsaved {
+        background-color: #ff6b6b;
+    }
+
+    .auto-save-indicator.saved {
+        background-color: #4ade80;
+    }
+
+    .toolbar {
+        background-color: var(--bg-primary);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        height: var(--toolbar-height);
+        position: sticky;
+        top: var(--header-height);
+        z-index: 99;
+    }
+
+    .content.home .toolbar {
+        display: none;
+    }
+
+    .left-tools, .right-tools {
+        display: flex;
+        gap: 0;
+    }
+
+    .center-tools {
+        display: flex;
+        align-items: center;
+    }
+
+    .word-char-count {
+        color: #3c3c3d;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 4px 8px;
+    }
+
+    .tool-btn {
+        background-color: transparent;
+        border: none;
+        color: var(--text-color);
+        cursor: pointer;
+        border-radius: 8px;
+        padding: 7px;
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s ease;
+        position: relative;
+        z-index: 999;
+    }
+
+    .tool-btn img {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+        filter: brightness(1.25);
+        transition: 0.3s ease;
+    }
+
+    .tool-btn:hover::after {
+        opacity: 1;
+    }
+
+    .tool-btn:hover {
+        background-color: var(--bg-secondary);
+    }
+
+    .tool-btn:hover img {
+        filter: brightness(1.5);
+    }
+
+    .tool-btn.active {
+        background-color: var(--bg-secondary);
+    }
+
+    .tool-btn.active img {
+        filter: brightness(1.5);
+    }
+
+    .editor-container {
+        position: relative;
+    }
+
+    .content.home .editor-container {
+        display: none;
+    }
+
+    /* Home Content Styles */
+    .home-content {
+        display: none;
+        padding: 24px;
+        gap: 24px;
+        flex-direction: column;
+    }
+
+    .content.home .home-content {
+        display: flex;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        background-color: var(--stat-bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 18px;
+        text-align: left;
+        transition: 0.25s ease;
+    }
+
+    .stat-card:hover {
+        filter: brightness(0.7);
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--stat-text-color);
+        margin-bottom: 6px;
+    }
+
+    .stat-label {
+        font-size: 17px;
+        font-weight: 500;
+        color: #7a7a7c;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .home-section {
+        border-top: 1px solid var(--border-color);
+        padding-top: 24px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    .view-toggle {
+        display: flex;
+        gap: 6px;
+    }
+
+    .view-btn {
+        width: 32px;
+        height: 32px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background-color: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.25s ease;
+    }
+
+    .view-btn:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .view-btn.active {
+        background-color: rgba(255, 255, 255, 0.068);
+    }
+
+    .view-btn img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .sbaces-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 14px;
+    }
+
+    .sbaces-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sbace-card {
+        background-color: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px;
+        cursor: pointer;
+        transition: 0.25s ease;
+    }
+
+    .sbace-card:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .sbace-card.list-view {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 0.5px solid var(--border-color);
+        padding: 12px 16px;
+        border-radius: 0;
+    }
+
+    .sbace-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 8px;
+    }
+
+    .sbace-card.list-view .sbace-name {
+        margin-bottom: 0;
+    }
+
+    .sbace-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .sbace-card.list-view .sbace-meta {
+        flex-direction: row;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .sbace-stat {
+        font-size: 13px;
+        font-weight: 500;
+        color: #97979f;
+    }
+
+    .show-more-btn {
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 10px 16px;
+        color: #97979f;
+        cursor: pointer;
+        transition: 0.25s ease;
+        font-size: 14px;
+        font-weight: 500;
+        margin-top: 14px;
+    }
+
+    .show-more-btn:hover {
+        color: var(--text-color);
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    #editor {
+        width: 100%;
+        min-height: 400px;
+        color: var(--text-color);
+        padding: 17px;
+        padding-left: 110px;
+        padding-right: 110px;
+        outline: none;
+        border-radius: 8px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: 'DM Sans', sans-serif;
+        position: relative;
+        caret-color: var(--text-color);
+        zoom: 130%;
+    }
+
+    .content::-webkit-scrollbar {
+        display: none;
+    }
+
+    .editor-placeholder {
+        position: absolute;
+        top: 17px;
+        left: 110px;
+        color: #777;
+        opacity: 0.8;
+        pointer-events: none;
+        z-index: 1;
+        zoom: 130%;
+    }
+
+    #editor ol, #editor ul {
+        margin: 0 !important;
+        padding: 0 !important;
+        padding-left: 1.5em !important;
+        display: block;
+    }
+
+    #editor ol li, #editor ul li {
+        margin: 0 !important;
+        padding: 0 !important;
+        display: list-item;
+        position: relative;
+    }
+
+    #editor ol li::marker {
+        font-size: inherit;
+    }
+
+    #editor ul li::marker {
+        font-size: inherit;
+    }
+
+    #editor ol li p, #editor ul li p {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    #editor > ol, #editor > ul,
+    #editor > p {
+        margin-block-start: 0 !important;
+        margin-block-end: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    #editor ol ol {
+        list-style-type: lower-alpha;
+    }
+
+    #editor ol ol ol {
+        list-style-type: decimal;
+    }
+
+    #editor ol ol ol ol {
+        list-style-type: lower-alpha;
+    }
+
+    #editor:focus {
+        border-color: var(--accent-color);
+    }
+
+
+
+    /* Search highlighting */
+    #editor mark {
+        background-color: #ffd469ea;
+        color: #000;
+        padding: 1px 2px;
+        border-radius: 2px;
+    }
+
+    #editor mark.current-match {
+        background-color: #ffd469ea;
+        font-weight: bold;
+    }
+
+    /* Tooltip styles */
+    .tooltip-bottom {
+        position: relative;
+    }
+
+    .tooltip-bottom::after {
+        content: attr(data-tooltip-text);
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 1000;
+    }
+
+    .tooltip-bottom:hover::after {
+        opacity: 1;
+    }
+
+    .tooltip-left::after {
+        content: attr(data-tooltip-text);
+        position: absolute;
+        top: 50%;
+        right: calc(100% + 8px);
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 1000;
+    }
+
+    .tooltip-left:hover::after {
+        opacity: 1;
+    }
+
+    .search-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .sbace-search-input {
+        width: 500px;
+        padding: 9px 15px;
+        padding-right: 35px;
+        border: 1px solid var(--border-color);
+        border-radius: 50px;
+        background-color: transparent;
+        color: var(--text-color);
+        font-size: 16px;
+        font-weight: 500;
+        outline: none;
+        transition: 0.25s ease;
+    }
+
+    .sbace-search-input:focus {
+        border-color: var(--border-color);
+        background-color: rgba(255, 255, 255, 0.019);
+    }
+
+    .sbace-search-input::placeholder {
+        color: #97979f;
+    }
+
+    .search-icon {
+        position: absolute;
+        right: 12px;
+        width: 19px;
+        height: 19px;
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+    /* Keep regular nav items silent, but let the toggle & option icons speak */
+    .sidebar:not(.collapsed) .nav-item .tooltip-bottom::after      { display:none; }   /* texts already visible */
+    .sidebar:not(.collapsed) .sidebar-toggle.tooltip-bottom::after { display:block; }  /* show “Collapse/Expand” */
+    .sidebar:not(.collapsed) .options-item.tooltip-bottom::after   { display:block; }  /* show “Rename/Star/Delete” */
+
+    /* hide the "Starred" section whenever the sidebar has .collapsed */
+    #sidebar.collapsed #starredSection {
+        display: none !important;
+    }
+
+    .sbace-name mark {
+        background-color: #ffd469ea;
+        color: #000;
+        padding: 1px 3px;
+        border-radius: 3px;
+        font-weight: 600;
+    }
+
+    /* Print styles for PDF download */
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        
+        #editor, #editor * {
+            visibility: visible;
+        }
+        
+        #editor {
+            position: absolute;
+            left: 0;
+            top: 0;
+            zoom: 100%;
+            padding: 40px;
+            color: black;
+            background: white;
+        }
+        
+        #editor mark {
+            background-color: transparent;
+            color: inherit;
+        }
+    }
+</style>
+<body>
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-title">Delete Space</div>
+            <div class="modal-message" id="deleteModalMessage">Are you sure you want to delete this space?</div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideDeleteModal()">Cancel</button>
+                <button class="modal-btn danger" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Modal -->
+    <div class="modal-overlay" id="clearModal">
+        <div class="modal-content">
+            <div class="modal-title">Clear Text</div>
+            <div class="modal-message">Are you sure you want to clear all text in this space?</div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideClearModal()">Cancel</button>
+                <button class="modal-btn danger" onclick="confirmClear()">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Space Name Modal -->
+    <div class="modal-overlay" id="spaceNameModal">
+        <div class="modal-content">
+            <div class="modal-title" id="spaceModalTitle">New Space</div>
+            <input type="text" id="spaceNameInput" class="modal-input" placeholder="Space name...">
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideSpaceNameModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="confirmSpaceName()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Find and Replace Modal -->
+    <div class="modal-overlay" id="findReplaceModal">
+        <div class="modal-content">
+            <input type="text" id="findInput" class="modal-input" placeholder="Find...">
+            <div id="findCounter" class="find-counter">0 results</div>
+            <input type="text" id="replaceInput" class="modal-input" placeholder="Replace with..." style="display: none;">
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideFindReplaceModal()">Cancel</button>
+                <button class="modal-btn confirm" id="replaceAllBtn" onclick="replaceAll()" style="display: none;">Replace All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trash Modal -->
+    <div class="modal-overlay" id="trashModal">
+        <div class="modal-content trash-modal">
+            <div class="modal-title">Trash</div>
+            <div id="trashContent" class="trash-content">
+                <!-- Trash items will be populated here -->
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideTrashModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Confirmation Modal -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal-content">
+            <div class="modal-title">Import Data</div>
+            <div class="modal-message">This will replace all existing data. Are you sure?</div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideImportModal()">Cancel</button>
+                <button class="modal-btn danger" onclick="confirmImport()">Import</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download Options Dropdown -->
+    <div id="downloadDropdown" class="download-dropdown">
+        <button class="download-option" onclick="downloadAs('pdf')">
+            <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fpdf.png&color=ff0030" alt="PDF">
+            PDF
+        </button>
+        <button class="download-option" onclick="downloadAs('txt')">
+            <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Ftxt-logo.png&color=6000ff" alt="TXT">
+            TXT
+        </button>
+        <button class="download-option" onclick="downloadAs('md')">
+            <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fmd-logo.png&color=ffc800" alt="Markdown">
+            Markdown
+        </button>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <div class="header-icons">
+        <button class="theme-toggle tooltip-left" onclick="exportAllData()" data-tooltip-text="Export All Data">
+            <img class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Foutbox.png&color=ffffff" width="18" height="18" alt="Export">
+        </button>
+        <button class="theme-toggle tooltip-bottom" onclick="importAllData()" data-tooltip-text="Import Data">
+            <img class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Finbox.png&color=ffffff" width="18" height="18" alt="Import">
+        </button>
+        <button id="theme-toggle" class="theme-toggle tooltip-bottom" data-tooltip-text="Theme">
+            <img id="theme-icon" class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Flight.png&color=ffffff" width="18" height="18" alt="Theme toggle">
+        </button>
+    </div>
+
+    <div class="layout" id="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo-container">
+                <div class="logo-section">
+                    <span class="logo-text font-bricolage-grotesque">Sbaces</span>
+                </div>
+                <button class="sidebar-toggle tooltip-bottom" onclick="toggleSidebar()">
+                    <img class="sidebar-toggle-icon" src="https://utils.marifyt.com/icons/open-sidebar.png" alt="Toggle Sidebar">
+                </button>
+            </div>
+            
+            <!-- Fixed buttons section -->
+            <div class="sidebar-fixed-buttons">
+                <div class="nav-item">
+                    <button class="home-btn" onclick="goHome()" data-tooltip-text="Home">
+                        <img class="nav-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fhome.png&color=ffffff" alt="Home">
+                        <span class="nav-text">Home</span>
+                    </button>
+                </div>
+                <div class="nav-item">
+                    <button class="new-space-btn" onclick="showNewSpaceModal()" data-tooltip-text="New">
+                        <img class="nav-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fthick_plus.png&color=ffffff" alt="New Space">
+                        <span class="nav-text">New Sbace</span>
+                    </button>
+                </div>
+                <div class="nav-item">
+                    <button class="trash-btn" onclick="showTrashModal()" data-tooltip-text="Trash">
+                        <img class="nav-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Ftrash.png&color=ffffff" alt="Trash">
+                        <span class="nav-text">Trash</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable navigation -->
+            <nav class="sidebar-nav" id="sidebarNav">
+                <!-- Starred Section (dynamic) -->
+                <div class="nav-section" id="starredSection" style="display: none;">
+                    <div class="nav-section-header">
+                        <span class="star-icon">★</span>
+                        Starred
+                    </div>
+                    <div id="starredSpaces">
+                        <!-- Starred spaces will be added here -->
+                    </div>
+                </div>
+
+                <!-- Recent Section -->
+                <div class="nav-section">
+                    <div class="nav-section-header">Recent</div>
+                    <div id="recentSpaces">
+                        <!-- Recent spaces will be added here -->
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="content" id="content">
+            <div class="content-header" id="pageTitle">
+                <span class="title-text" onclick="openRenameFromHeader()">Select a space</span>
+                <div class="header-actions">
+                    <div class="auto-save-indicator" id="autoSaveIndicator"></div>
+                    <button class="header-btn tooltip-bottom" id="renameBtn" onclick="openRenameFromHeader()" data-tooltip-text="Rename" style="display: none;">
+                        <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fedit.png&color=3e3e42" alt="Rename">
+                    </button>
+                    <button class="header-btn tooltip-bottom" id="starBtn" onclick="toggleCurrentTabStar()" data-tooltip-text="Star" style="display: none;">
+                        <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fstar8-empty.png&color=3e3e42" alt="Star">
+                    </button>
+                    <button class="header-btn tooltip-bottom" id="deleteBtn" onclick="deleteCurrentTab()" data-tooltip-text="Delete" style="display: none;">
+                        <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Ftrash.png&color=3e3e42" alt="Delete">
+                    </button>
+                    <button class="header-btn tooltip-bottom" id="downloadBtn" onclick="showDownloadOptions(event)" data-tooltip-text="Download" style="display: none;">
+                        <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fdownload2.png&color=3e3e42" alt="Download">
+                    </button>
+                </div>
+            </div>
+            
+            <div class="toolbar">
+                <div class="left-tools">
+                    <button class="tool-btn tooltip-bottom" onclick="formatText('bold')" data-tooltip-text="Bold (Ctrl+B)"><img src="https://utils.marifyt.com/icons/bold2.png" alt="Bold"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="formatText('italic')" data-tooltip-text="Italic (Ctrl+I)"><img src="https://utils.marifyt.com/icons/italic2.png" alt="Italic"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="formatText('underline')" data-tooltip-text="Underline (Ctrl+U)"><img src="https://utils.marifyt.com/icons/underline2.png" alt="Underline"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="formatText('orderedList')" data-tooltip-text="Numbered List"><img src="https://utils.marifyt.com/icons/numberedlist2.png" alt="Numbered List"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="formatText('unorderedList')" data-tooltip-text="Bullet List"><img src="https://utils.marifyt.com/icons/bullets2.png" alt="Bullet List"></button>
+                </div>
+                <div class="center-tools">
+                    <div id="wordCharCount" class="word-char-count">Words: 0 | Chars: 0</div>
+                </div>
+                <div class="right-tools">
+                    <button class="tool-btn tooltip-bottom" onclick="toggleQuickFind()" data-tooltip-text="Quick Find (Ctrl+F)"><img src="https://utils.marifyt.com/icons/search2.png" alt="Quick Find"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="showFindReplaceModal()" data-tooltip-text="Find & Replace"><img src="https://utils.marifyt.com/icons/find-replace.png" alt="Find & Replace" style="transform: scaleX(-1);"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="undoAction()" data-tooltip-text="Undo (Ctrl+Z)"><img src="https://utils.marifyt.com/icons/undo2.png" alt="Undo"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="redoAction()" data-tooltip-text="Redo (Ctrl+Y)"><img src="https://utils.marifyt.com/icons/redo2.png" alt="Redo"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="copyText()" data-tooltip-text="Copy"><img src="https://utils.marifyt.com/icons/copy2.png" alt="Copy"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="showClearModal()" data-tooltip-text="Clear"><img src="https://utils.marifyt.com/icons/clear.png" alt="Clear"></button>
+                </div>
+            </div>
+
+            <!-- Home Content -->
+            <div class="home-content">
+                <!-- Statistics Section -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statCharacters">0</div>
+                        <div class="stat-label font-share-tech">Characters</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statWords">0</div>
+                        <div class="stat-label font-share-tech">Written Words</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statLines">0</div>
+                        <div class="stat-label font-share-tech">Written Lines</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statSpaces">0</div>
+                        <div class="stat-label font-share-tech">Number of Sbaces</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statStorage">0 KB</div>
+                        <div class="stat-label font-share-tech">Local Storage</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statLastVisit">Never</div>
+                        <div class="stat-label font-share-tech">Last Visit</div>
+                    </div>
+                </div>
+
+                <!-- Recent Sbaces Section -->
+                <div class="home-section">
+                    <div class="section-header">
+                        <div class="section-title font-bricolage-grotesque">Recent Sbaces</div>
+                    </div>
+                    <div id="recentSbacesContainer">
+                        <!-- Recent sbaces will be populated here -->
+                    </div>
+                </div>
+
+                <!-- All Sbaces Section -->
+                <div class="home-section">
+                    <div class="section-header">
+                        <div class="section-title font-bricolage-grotesque" id="allSbacesTitle">All Sbaces</div>
+                        <div class="search-container">
+                            <input type="text" id="sbaceSearchInput" class="sbace-search-input" placeholder="Search sbaces...">
+                            <img class="search-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fsearch2.png&color=97979f" alt="Search">
+                        </div>
+                        <div class="view-toggle">
+                            <button class="view-btn active tooltip-bottom" data-tooltip-text="Grid View" onclick="toggleAllView('grid')" id="allGridBtn">
+                                <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-grid.png&color=97979f" alt="Grid View">
+                            </button>
+                            <button class="view-btn tooltip-bottom" data-tooltip-text="List View" onclick="toggleAllView('list')" id="allListBtn">
+                                <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-list.png&color=97979f" alt="List View">
+                            </button>
+                        </div>
+                    </div>
+                    <div id="allSbacesContainer">
+                        <!-- All sbaces will be populated here -->
+                    </div>
+                    <button class="show-more-btn" id="showMoreBtn" onclick="showMoreSbaces()" style="display: none;">
+                        Show More
+                    </button>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-placeholder" id="editorPlaceholder">Text goes here...</div>
+                <div id="editor" contenteditable="true"></div>
+            </div>
+        </main>
+    </div>
+
+    <div id="quickFindOverlay" class="quick-find-overlay">
+        <div class="quick-find-input-container">
+            <input type="text" id="quickFindInput" class="quick-find-input" placeholder="Search...">
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
+
+    <script src="https://utils.marifyt.com/scripts/cursor.js"></script>
+    <script>
+        // Get elements
+        const editor = document.getElementById('editor');
+        const content = document.getElementById('content');
+        const toolBtns = document.querySelectorAll('.tool-btn');
+        const placeholder = document.getElementById('editorPlaceholder');
+        const pageTitle = document.getElementById('pageTitle');
+        const starredSection = document.getElementById('starredSection');
+        const starredSpaces = document.getElementById('starredSpaces');
+        const recentSpaces = document.getElementById('recentSpaces');
+        const sidebar = document.getElementById('sidebar');
+        const layout = document.getElementById('layout');
+        const homeBtn = document.querySelector('.home-btn');
+        const wordCharCount = document.getElementById('wordCharCount');
+        const autoSaveIndicator = document.getElementById('autoSaveIndicator');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // Tab management vars
+        let currentTabId = null;
+        let tabs = {};
+        let tabCounter = 0;
+        let tabToDelete = null;
+        let isRenaming = false;
+        let tabToRename = null;
+        let sidebarCollapsed = false;
+        let currentOptionsBar = null;
+        let saveTimeout = null;
+        let searchQuery = '';
+        let filteredTabs = {};
+
+        // Search vars
+        let currentMatches = [];
+        let currentMatchIndex = 0;
+        let findText = '';
+
+        // Import vars
+        let importData = null;
+
+        // Home view states
+        let recentViewMode = 'grid';
+        let allViewMode = 'grid';
+        let allSbacesVisible = 20;
+        let showingAll = false;
+
+        // Initialize
+        loadTabs();
+        updatePlaceholder();
+        initializeUrl();
+
+        // Initialize URL handling
+        function initializeUrl() {
+            const hash = window.location.hash.substring(1);
+            if (hash === 'home' || hash === '') {
+                goHome();
+            } else {
+                // Try to find and switch to the tab with matching name
+                const matchingTab = Object.entries(tabs).find(([id, tab]) => 
+                    tab.name.toLowerCase().replace(/\s+/g, '-') === hash
+                );
+                if (matchingTab) {
+                    switchToTab(matchingTab[0]);
+                } else {
+                    goHome();
+                }
+            }
+        }
+
+        // Toggle star for current tab
+        function toggleCurrentTabStar() {
+            if (currentTabId && tabs[currentTabId]) {
+                toggleStarTab(currentTabId);
+                updateHeaderButtons();
+            }
+        }
+
+        // Delete current tab
+        function deleteCurrentTab() {
+            if (currentTabId && tabs[currentTabId]) {
+                const tabName = tabs[currentTabId].name;
+                showDeleteModal(currentTabId, tabName);
+            }
+        }
+
+        // Search function
+        function searchSbaces(query) {
+            searchQuery = query.toLowerCase().trim();
+            
+            if (searchQuery === '') {
+                // Show all sbaces if search is empty
+                filteredTabs = tabs;
+            } else {
+                // Filter tabs based on name and content
+                filteredTabs = {};
+                Object.entries(tabs).forEach(([id, tab]) => {
+                    const nameMatch = tab.name.toLowerCase().includes(searchQuery);
+                    const contentMatch = stripHTML(tab.content || '').toLowerCase().includes(searchQuery);
+                    
+                    if (nameMatch || contentMatch) {
+                        filteredTabs[id] = tab;
+                    }
+                });
+            }
+            
+            // Update the display
+            updateAllSbacesWithSearch();
+        }
+
+        // Updated function to handle search results
+        function updateAllSbacesWithSearch() {
+            const tabsToShow = Object.entries(filteredTabs)
+                .sort((a, b) => (b[1].lastModified || b[1].created) - (a[1].lastModified || a[1].created));
+            
+            const visibleTabs = showingAll ? tabsToShow : tabsToShow.slice(0, allSbacesVisible);
+            const container = document.getElementById('allSbacesContainer');
+            const showMoreBtn = document.getElementById('showMoreBtn');
+            
+            if (tabsToShow.length === 0) {
+                // Show no results message
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #97979f;">
+                        <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fsearch2.png&color=97979f" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;">
+                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">No sbaces found</div>
+                        <div style="font-size: 14px;">Try adjusting your search terms</div>
+                    </div>
+                `;
+                showMoreBtn.style.display = 'none';
+                return;
+            }
+            
+            if (allViewMode === 'grid') {
+                container.className = 'sbaces-grid';
+                container.innerHTML = visibleTabs.map(([id, tab]) => createSbaceCardWithHighlight(id, tab, false)).join('');
+            } else {
+                container.className = 'sbaces-list';
+                container.innerHTML = visibleTabs.map(([id, tab]) => createSbaceCardWithHighlight(id, tab, true)).join('');
+            }
+            
+            // Show/hide "Show More" button
+            if (tabsToShow.length > allSbacesVisible && !showingAll) {
+                showMoreBtn.style.display = 'block';
+                showMoreBtn.textContent = `Show More (${tabsToShow.length - allSbacesVisible} remaining)`;
+            } else {
+                showMoreBtn.style.display = 'none';
+            }
+        }
+
+        // Enhanced card creation with search highlighting
+        function createSbaceCardWithHighlight(id, tab, isListView) {
+            const textContent = stripHTML(tab.content || '');
+            const wordCount = textContent.trim() ? textContent.trim().split(/\s+/).length : 0;
+            const lastOpened = formatRelativeTime(tab.lastModified || tab.created);
+            const dateCreated = new Date(tab.created).toLocaleDateString();
+            
+            const listClass = isListView ? ' list-view' : '';
+            
+            // Highlight search terms in name
+            let highlightedName = tab.name;
+            if (searchQuery) {
+                const regex = new RegExp(`(${searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                highlightedName = tab.name.replace(regex, '<mark>$1</mark>');
+            }
+            
+            return `
+                <div class="sbace-card${listClass}" onclick="switchToTab('${id}')">
+                    <div class="sbace-name">${highlightedName}</div>
+                    <div class="sbace-meta">
+                        <div class="sbace-stat">${wordCount} words</div>
+                        <div class="sbace-stat">Opened ${lastOpened}</div>
+                        <div class="sbace-stat">Created ${dateCreated}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update header buttons based on current tab
+        function updateHeaderButtons() {
+            const renameBtn = document.getElementById('renameBtn');
+            const starBtn = document.getElementById('starBtn');
+            const deleteBtn = document.getElementById('deleteBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const starImg = starBtn.querySelector('img');
+            
+            if (currentTabId && tabs[currentTabId]) {
+                // Show all buttons
+                renameBtn.style.display = 'block';
+                starBtn.style.display = 'block';
+                deleteBtn.style.display = 'block';
+                downloadBtn.style.display = 'block';
+                
+                // Update star button icon based on starred state
+                if (tabs[currentTabId].starred) {
+                    starImg.src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fstar8-full.png&color=3e3e42';
+                    starBtn.setAttribute('data-tooltip-text', 'Unstar');
+                } else {
+                    starImg.src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fstar8-empty.png&color=3e3e42';
+                    starBtn.setAttribute('data-tooltip-text', 'Star');
+                }
+            } else {
+                // Hide all buttons when no tab is active (home view)
+                renameBtn.style.display = 'none';
+                starBtn.style.display = 'none';
+                deleteBtn.style.display = 'none';
+                downloadBtn.style.display = 'none';
+            }
+        }
+
+        // Update URL when switching tabs
+        function updateUrl(tabName = null) {
+            if (tabName) {
+                const hash = tabName.toLowerCase().replace(/\s+/g, '-');
+                window.history.replaceState(null, null, `#${hash}`);
+            } else {
+                window.history.replaceState(null, null, '#home');
+            }
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Auto-save indicator functions
+        function showUnsaved() {
+            autoSaveIndicator.className = 'auto-save-indicator unsaved';
+        }
+
+        function showSaved() {
+            autoSaveIndicator.className = 'auto-save-indicator saved';
+            setTimeout(() => {
+                autoSaveIndicator.className = 'auto-save-indicator';
+            }, 1000);
+        }
+
+        // Debounced save function
+        function debouncedSave() {
+            showUnsaved();
+            
+            if (saveTimeout) {
+                clearTimeout(saveTimeout);
+            }
+            
+            saveTimeout = setTimeout(() => {
+                saveCurrentTab();
+                showSaved();
+            }, 300);
+        }
+
+    // Update word and character count
+    function updateWordCharCount() {
+        if (currentTabId && tabs[currentTabId]) {
+            // Check if there's a text selection
+            const selection = window.getSelection();
+            
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                // There's a selection - show selection count
+                const selectedText = selection.toString();
+                const wordCount = selectedText.trim() ? selectedText.trim().split(/\s+/).length : 0;
+                const charCount = selectedText.length;
+                
+                wordCharCount.textContent = `${wordCount} Words, ${charCount} Characters (Selected)`;
+            } else {
+                // No selection - show total count
+                const textContent = stripHTML(editor.innerHTML);
+                const wordCount = textContent.trim() ? textContent.trim().split(/\s+/).length : 0;
+                const charCount = textContent.length;
+                
+                wordCharCount.textContent = `${wordCount} Words, ${charCount} Characters`;
+            }
+        } else {
+            wordCharCount.textContent = 'Words: 0 | Chars: 0';
+        }
+    }
+
+    // Add this to your existing showQuickFind button click handler
+    function toggleQuickFind() {
+        const overlay = document.getElementById('quickFindOverlay');
+        
+        if (overlay.classList.contains('show')) {
+            hideQuickFind();
+        } else {
+            showQuickFind();
+        }
+    }
+
+    function showQuickFind() {
+        const overlay = document.getElementById('quickFindOverlay');
+        const input = document.getElementById('quickFindInput');
+        const findButton = document.querySelector('[data-tooltip-text="Quick Find (Ctrl+F)"]');
+        const findIcon = findButton.querySelector('img');
+        
+        // Position the overlay relative to the find button
+        findButton.style.position = 'relative';
+        findButton.appendChild(overlay);
+        
+        // Change icon to close icon and add class to prevent hover effects
+        findIcon.src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fclose3.png&color=27272a';
+        findButton.classList.add('find-open');
+        
+        overlay.classList.add('show');
+        input.focus();
+        input.select();
+        
+        // Add click outside listener
+        setTimeout(() => {
+            document.addEventListener('click', handleClickOutside);
+        }, 0);
+    }
+
+    function hideQuickFind() {
+        const overlay = document.getElementById('quickFindOverlay');
+        const findButton = document.querySelector('[data-tooltip-text="Quick Find (Ctrl+F)"]');
+        const findIcon = findButton.querySelector('img');
+        
+        overlay.classList.remove('show');
+        
+        // Restore original icon and remove class
+        findIcon.src = 'https://utils.marifyt.com/icons/search2.png';
+        findButton.classList.remove('find-open');
+        findButton.style.position = '';
+        
+        // Move overlay back to body
+        document.body.appendChild(overlay);
+        
+        // Remove click outside listener
+        document.removeEventListener('click', handleClickOutside);
+        
+        clearSearchHighlights();
+    }
+
+    // Handle click outside
+    function handleClickOutside(e) {
+        const overlay = document.getElementById('quickFindOverlay');
+        const findButton = document.querySelector('[data-tooltip-text="Quick Find (Ctrl+F)"]');
+        
+        // Don't close if clicking on the input, overlay, or find button
+        if (!overlay.contains(e.target) && !findButton.contains(e.target)) {
+            hideQuickFind();
+        }
+    }
+
+        function clearSearchHighlights() {
+            const marks = editor.querySelectorAll('mark');
+            marks.forEach(mark => {
+                const parent = mark.parentNode;
+                parent.replaceChild(document.createTextNode(mark.textContent), mark);
+                parent.normalize();
+            });
+            currentMatches = [];
+            currentMatchIndex = 0;
+        }
+
+        function highlightMatches(searchText) {
+            if (!searchText) {
+                clearSearchHighlights();
+                return;
+            }
+            
+            clearSearchHighlights();
+            
+            const walker = document.createTreeWalker(
+                editor,
+                NodeFilter.SHOW_TEXT,
+                null,
+                false
+            );
+            
+            const textNodes = [];
+            let node;
+            
+            while (node = walker.nextNode()) {
+                textNodes.push(node);
+            }
+            
+            const regex = new RegExp(searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+            currentMatches = [];
+            
+            textNodes.forEach(textNode => {
+                const text = textNode.textContent;
+                const matches = [...text.matchAll(regex)];
+                
+                if (matches.length > 0) {
+                    let lastIndex = 0;
+                    const fragment = document.createDocumentFragment();
+                    
+                    matches.forEach(match => {
+                        // Add text before match
+                        if (match.index > lastIndex) {
+                            fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+                        }
+                        
+                        // Add highlighted match
+                        const mark = document.createElement('mark');
+                        mark.textContent = match[0];
+                        fragment.appendChild(mark);
+                        currentMatches.push(mark);
+                        
+                        lastIndex = match.index + match[0].length;
+                    });
+                    
+                    // Add remaining text
+                    if (lastIndex < text.length) {
+                        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+                    }
+                    
+                    textNode.parentNode.replaceChild(fragment, textNode);
+                }
+            });
+            
+            if (currentMatches.length > 0) {
+                currentMatchIndex = 0;
+                highlightCurrentMatch();
+            }
+        }
+
+        function highlightCurrentMatch() {
+            currentMatches.forEach((mark, index) => {
+                mark.classList.toggle('current-match', index === currentMatchIndex);
+            });
+            
+            if (currentMatches[currentMatchIndex]) {
+                currentMatches[currentMatchIndex].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }
+
+        function nextMatch() {
+            if (currentMatches.length > 0) {
+                currentMatchIndex = (currentMatchIndex + 1) % currentMatches.length;
+                highlightCurrentMatch();
+            }
+        }
+
+        // Find and Replace functions
+        function showFindReplaceModal() {
+            const modal = document.getElementById('findReplaceModal');
+            const findInput = document.getElementById('findInput');
+            const replaceInput = document.getElementById('replaceInput');
+            const counter = document.getElementById('findCounter');
+            const replaceBtn = document.getElementById('replaceAllBtn');
+            
+            findInput.value = '';
+            replaceInput.value = '';
+            counter.textContent = '0 results';
+            replaceInput.style.display = 'none';
+            replaceBtn.style.display = 'none';
+            
+            modal.classList.add('show');
+            setTimeout(() => findInput.focus(), 100);
+        }
+
+        function hideFindReplaceModal() {
+            const modal = document.getElementById('findReplaceModal');
+            modal.classList.remove('show');
+            clearSearchHighlights();
+        }
+
+        function updateFindCounter() {
+            const findInput = document.getElementById('findInput');
+            const replaceInput = document.getElementById('replaceInput');
+            const counter = document.getElementById('findCounter');
+            const replaceBtn = document.getElementById('replaceAllBtn');
+            
+            const searchText = findInput.value;
+            
+            if (searchText) {
+                highlightMatches(searchText);
+                counter.textContent = `${currentMatches.length} results`;
+                
+                if (currentMatches.length > 0) {
+                    replaceInput.style.display = 'block';
+                    replaceBtn.style.display = 'block';
+                } else {
+                    replaceInput.style.display = 'none';
+                    replaceBtn.style.display = 'none';
+                }
+            } else {
+                clearSearchHighlights();
+                counter.textContent = '0 results';
+                replaceInput.style.display = 'none';
+                replaceBtn.style.display = 'none';
+            }
+        }
+
+        function replaceAll() {
+            const findInput = document.getElementById('findInput');
+            const replaceInput = document.getElementById('replaceInput');
+            const findText = findInput.value;
+            const replaceText = replaceInput.value;
+            
+            if (!findText) return;
+            
+            // Save current cursor position
+            const selection = window.getSelection();
+            let cursorOffset = 0;
+            
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                cursorOffset = range.startOffset;
+            }
+            
+            // Perform replacement
+            const content = editor.innerHTML;
+            const regex = new RegExp(findText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+            const newContent = content.replace(regex, replaceText);
+            
+            editor.innerHTML = newContent;
+            
+            // Restore cursor position (approximately)
+            setTimeout(() => {
+                const newRange = document.createRange();
+                const newSelection = window.getSelection();
+                
+                if (editor.childNodes.length > 0) {
+                    let textNode = editor.childNodes[0];
+                    while (textNode && textNode.nodeType !== Node.TEXT_NODE) {
+                        textNode = textNode.childNodes[0];
+                    }
+                    
+                    if (textNode) {
+                        newRange.setStart(textNode, Math.min(cursorOffset, textNode.textContent.length));
+                        newRange.collapse(true);
+                        newSelection.removeAllRanges();
+                        newSelection.addRange(newRange);
+                    }
+                }
+                
+                editor.focus();
+            }, 0);
+            
+            debouncedSave();
+            updateWordCharCount();
+            showToast(`Replaced ${currentMatches.length} occurrences`);
+            hideFindReplaceModal();
+        }
+
+        // Trash functions
+        function moveToTrash(tabId) {
+            const tab = tabs[tabId];
+            if (!tab) return;
+            
+            const trashData = JSON.parse(localStorage.getItem('trash') || '[]');
+            
+            const trashItem = {
+                id: tabId,
+                name: tab.name,
+                content: tab.content,
+                created: tab.created,
+                lastModified: tab.lastModified,
+                starred: tab.starred,
+                deletedAt: Date.now()
+            };
+            
+            trashData.push(trashItem);
+            localStorage.setItem('trash', JSON.stringify(trashData));
+        }
+
+        function showTrashModal() {
+            const modal = document.getElementById('trashModal');
+            const trashContent = document.getElementById('trashContent');
+            
+            const trashData = JSON.parse(localStorage.getItem('trash') || '[]');
+            
+            if (trashData.length === 0) {
+                trashContent.innerHTML = '<div style="color: #97979f; text-align: center; padding: 20px;">Trash is empty</div>';
+            } else {
+                trashContent.innerHTML = trashData.map(item => `
+                    <div class="trash-item">
+                        <div class="trash-item-info">
+                            <div class="trash-item-name">${item.name}</div>
+                            <div class="trash-item-date">Deleted ${formatRelativeTime(item.deletedAt)}</div>
+                        </div>
+                        <div class="trash-item-actions">
+                            <button class="trash-btn-small restore" onclick="restoreFromTrash('${item.id}')">Restore</button>
+                            <button class="trash-btn-small delete" onclick="deleteFromTrash('${item.id}')">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function hideTrashModal() {
+            const modal = document.getElementById('trashModal');
+            modal.classList.remove('show');
+        }
+
+        function restoreFromTrash(itemId) {
+            const trashData = JSON.parse(localStorage.getItem('trash') || '[]');
+            const itemIndex = trashData.findIndex(item => item.id === itemId);
+            
+            if (itemIndex === -1) return;
+            
+            const item = trashData[itemIndex];
+            
+            // Restore to tabs
+            tabs[item.id] = {
+                name: item.name,
+                content: item.content,
+                created: item.created,
+                lastModified: item.lastModified,
+                starred: item.starred
+            };
+            
+            // Remove from trash
+            trashData.splice(itemIndex, 1);
+            localStorage.setItem('trash', JSON.stringify(trashData));
+            localStorage.setItem('editorTabs', JSON.stringify(tabs));
+            
+            renderTabs();
+            showToast(`Restored "${item.name}"`);
+            
+            // Refresh trash modal
+            showTrashModal();
+            
+            if (content.classList.contains('home')) {
+                updateHomeContent();
+            }
+        }
+
+        function deleteFromTrash(itemId) {
+            const trashData = JSON.parse(localStorage.getItem('trash') || '[]');
+            const itemIndex = trashData.findIndex(item => item.id === itemId);
+            
+            if (itemIndex === -1) return;
+            
+            const item = trashData[itemIndex];
+            trashData.splice(itemIndex, 1);
+            localStorage.setItem('trash', JSON.stringify(trashData));
+            
+            showToast(`Permanently deleted "${item.name}"`);
+            
+            // Refresh trash modal
+            showTrashModal();
+        }
+
+        function showDownloadOptions(event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            
+            const dropdown = document.getElementById('downloadDropdown');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            // Get button position
+            const buttonRect = downloadBtn.getBoundingClientRect();
+            
+            // Position dropdown relative to button
+            dropdown.style.position = 'fixed';
+            dropdown.style.top = `${buttonRect.bottom + 8}px`;
+            dropdown.style.right = `${window.innerWidth - buttonRect.right}px`;
+            dropdown.style.left = 'auto';
+            
+            dropdown.classList.add('show');
+            
+            // Close dropdown when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', function closeDropdown(e) {
+                    if (!dropdown.contains(e.target) && !downloadBtn.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                        document.removeEventListener('click', closeDropdown);
+                    }
+                });
+            }, 0);
+        }
+
+        function downloadAs(format) {
+            const dropdown = document.getElementById('downloadDropdown');
+            dropdown.classList.remove('show');
+            
+            if (!currentTabId || !tabs[currentTabId]) return;
+            
+            const tab = tabs[currentTabId];
+            const filename = `space-${tab.name.replace(/[^a-z0-9]/gi, '_')}-${new Date().toISOString().split('T')[0]}`;
+            
+            switch (format) {
+                case 'pdf':
+                    downloadAsPDF(filename);
+                    break;
+                case 'txt':
+                    downloadAsText(filename);
+                    break;
+                case 'md':
+                    downloadAsMarkdown(filename);
+                    break;
+            }
+        }
+
+        function downloadAsPDF(filename) {
+            // Temporarily hide search highlights for clean PDF
+            const marks = editor.querySelectorAll('mark');
+            marks.forEach(mark => mark.style.display = 'none');
+            
+            // Use browser's print functionality
+            const originalTitle = document.title;
+            document.title = filename;
+            
+            window.print();
+            
+            // Restore
+            document.title = originalTitle;
+            marks.forEach(mark => mark.style.display = '');
+        }
+
+        function downloadAsText(filename) {
+            const textContent = stripHTML(editor.innerHTML);
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadAsMarkdown(filename) {
+            const markdownContent = htmlToMarkdown(editor.innerHTML);
+            const blob = new Blob([markdownContent], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function htmlToMarkdown(html) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            
+            // Simple HTML to Markdown conversion
+            let markdown = tempDiv.innerHTML;
+            
+            // Convert bold
+            markdown = markdown.replace(/<(b|strong)>(.*?)<\/(b|strong)>/gi, '**$2**');
+            
+            // Convert italic
+            markdown = markdown.replace(/<(i|em)>(.*?)<\/(i|em)>/gi, '*$2*');
+            
+            // Convert underline (not standard markdown, but we'll use emphasis)
+            markdown = markdown.replace(/<u>(.*?)<\/u>/gi, '_$1_');
+            
+            // Convert ordered lists
+            markdown = markdown.replace(/<ol[^>]*>(.*?)<\/ol>/gis, (match, content) => {
+                let counter = 1;
+                return content.replace(/<li[^>]*>(.*?)<\/li>/gi, () => `${counter++}. $1\n`);
+            });
+            
+            // Convert unordered lists
+            markdown = markdown.replace(/<ul[^>]*>(.*?)<\/ul>/gis, (match, content) => {
+                return content.replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n');
+            });
+            
+            // Convert paragraphs
+            markdown = markdown.replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n');
+            
+            // Convert line breaks
+            markdown = markdown.replace(/<br[^>]*>/gi, '\n');
+            
+            // Remove remaining HTML tags
+            markdown = markdown.replace(/<[^>]*>/g, '');
+            
+            // Clean up extra whitespace
+            markdown = markdown.replace(/\n{3,}/g, '\n\n').trim();
+            
+            return markdown;
+        }
+
+        function exportAllData() {
+            const exportData = {
+                tabs: tabs,
+                trash: JSON.parse(localStorage.getItem('trash') || '[]'),
+                activeTabId: currentTabId,
+                sidebarCollapsed: sidebarCollapsed,
+                lastVisit: localStorage.getItem('lastVisit'),
+                exportDate: Date.now(),
+                version: '1.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+            const filename = `writing-sbace-backup-${date}.json`;
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Data exported successfully');
+        }
+
+        function importAllData() {
+            const fileInput = document.getElementById('fileInput');
+            fileInput.onchange = handleFileSelect;
+            fileInput.click();
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    importData = JSON.parse(e.target.result);
+                    showImportModal();
+                } catch (error) {
+                    showToast('Invalid file format');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
+
+        function showImportModal() {
+            const modal = document.getElementById('importModal');
+            modal.classList.add('show');
+        }
+
+        function hideImportModal() {
+            const modal = document.getElementById('importModal');
+            modal.classList.remove('show');
+            importData = null;
+        }
+
+        function confirmImport() {
+            if (!importData) return;
+            
+            try {
+                // Import data
+                if (importData.tabs) {
+                    tabs = importData.tabs;
+                    localStorage.setItem('editorTabs', JSON.stringify(tabs));
+                }
+                
+                if (importData.trash) {
+                    localStorage.setItem('trash', JSON.stringify(importData.trash));
+                }
+                
+                if (importData.activeTabId && tabs[importData.activeTabId]) {
+                    currentTabId = importData.activeTabId;
+                    localStorage.setItem('activeTabId', currentTabId);
+                }
+                
+                if (typeof importData.sidebarCollapsed === 'boolean') {
+                    sidebarCollapsed = importData.sidebarCollapsed;
+                    localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
+                }
+                
+                if (importData.lastVisit) {
+                    localStorage.setItem('lastVisit', importData.lastVisit);
+                }
+                
+                // Refresh UI
+                hideImportModal();
+                window.location.reload();
+                
+            } catch (error) {
+                showToast('Import failed');
+                hideImportModal();
+            }
+        }
+
+        // Search input event listener
+        document.getElementById('sbaceSearchInput').addEventListener('input', function(e) {
+            searchSbaces(e.target.value);
+        });
+
+        // Clear search when switching to home
+        function goHome() {
+            currentTabId = null;
+            editor.innerHTML = '';
+            pageTitle.querySelector('.title-text').textContent = 'Home';
+            content.classList.add('home');
+            downloadBtn.style.display = 'none';
+            autoSaveIndicator.className = 'auto-save-indicator';
+            
+            // Clear search
+            const searchInput = document.getElementById('sbaceSearchInput');
+            if (searchInput) {
+                searchInput.value = '';
+                searchQuery = '';
+                filteredTabs = tabs;
+            }
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-link').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to home button
+            homeBtn.classList.add('active');
+            
+            updatePlaceholder();
+            updateUrl();
+            hideOptionsBar();
+            updateHomeContent();
+            updateLastVisit();
+            updateWordCharCount();
+            updateHeaderButtons();
+        }
+
+        // Update last visit time
+        function updateLastVisit() {
+            localStorage.setItem('lastVisit', Date.now());
+        }
+
+        // Update home content with statistics and sbace lists
+        function updateHomeContent() {
+            updateStatistics();
+            updateRecentSbaces();
+            updateAllSbaces();
+        }
+
+        // Calculate and update statistics
+        function updateStatistics() {
+            let totalCharacters = 0;
+            let totalWords = 0;
+            let totalLines = 0;
+            
+            // Calculate totals from all tabs
+            Object.values(tabs).forEach(tab => {
+                const textContent = stripHTML(tab.content || '');
+                totalCharacters += textContent.length;
+                totalWords += textContent.trim() ? textContent.trim().split(/\s+/).length : 0;
+                totalLines += textContent.split('\n').length;
+            });
+            
+            // Calculate storage usage
+            const storageSize = new Blob([JSON.stringify(tabs)]).size;
+            const storageSizeKB = Math.round(storageSize / 1024 * 10) / 10;
+            
+            // Get last visit
+            const lastVisit = localStorage.getItem('lastVisit');
+            const lastVisitText = lastVisit ? formatRelativeTime(parseInt(lastVisit)) : 'Never';
+            
+            // Update DOM elements
+            document.getElementById('statCharacters').textContent = totalCharacters.toLocaleString();
+            document.getElementById('statWords').textContent = totalWords.toLocaleString();
+            document.getElementById('statLines').textContent = totalLines.toLocaleString();
+            document.getElementById('statSpaces').textContent = Object.keys(tabs).length;
+            document.getElementById('statStorage').textContent = `${storageSizeKB} KB`;
+            document.getElementById('statLastVisit').textContent = lastVisitText;
+        }
+
+        // Strip HTML tags from content
+        function stripHTML(html) {
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            return temp.textContent || temp.innerText || '';
+        }
+
+        // Format relative time
+        function formatRelativeTime(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (days > 0) return `${days}d ago`;
+            if (hours > 0) return `${hours}h ago`;
+            if (minutes > 0) return `${minutes}m ago`;
+            return 'Just now';
+        }
+
+        // Update recent sbaces (last 5)
+        function updateRecentSbaces() {
+            const recentTabs = Object.entries(tabs)
+                .sort((a, b) => (b[1].lastModified || b[1].created) - (a[1].lastModified || a[1].created))
+                .slice(0, 5);
+            
+            const container = document.getElementById('recentSbacesContainer');
+            
+            if (recentViewMode === 'grid') {
+                container.className = 'sbaces-grid';
+                container.innerHTML = recentTabs.map(([id, tab]) => createSbaceCard(id, tab, false)).join('');
+            } else {
+                container.className = 'sbaces-list';
+                container.innerHTML = recentTabs.map(([id, tab]) => createSbaceCard(id, tab, true)).join('');
+            }
+        }
+
+        // Update all sbaces with search functionality
+        function updateAllSbaces() {
+            // Use filtered tabs if search is active, otherwise use all tabs
+            const tabsToUse = searchQuery ? filteredTabs : tabs;
+
+            const totalCount = Object.keys(tabs).length;
+            document.getElementById('allSbacesTitle').textContent = `All Sbaces (${totalCount})`;
+
+            const sortedTabs = Object.entries(tabsToUse)
+                .sort((a, b) => (b[1].lastModified || b[1].created) - (a[1].lastModified || a[1].created));
+            
+            const visibleTabs = showingAll ? sortedTabs : sortedTabs.slice(0, allSbacesVisible);
+            const container = document.getElementById('allSbacesContainer');
+            const showMoreBtn = document.getElementById('showMoreBtn');
+            
+            // Show no results message if search returns empty
+            if (sortedTabs.length === 0 && searchQuery) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #97979f;">
+                        <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fsearch2.png&color=97979f" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;">
+                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">No sbaces found</div>
+                        <div style="font-size: 14px;">Try adjusting your search terms</div>
+                    </div>
+                `;
+                showMoreBtn.style.display = 'none';
+                return;
+            }
+            
+            // Show empty state if no sbaces exist at all
+            if (sortedTabs.length === 0 && !searchQuery) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #97979f;">
+                        <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fpage.png&color=97979f" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;">
+                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">No sbaces yet</div>
+                        <div style="font-size: 14px;">Create your first sbace to get started</div>
+                    </div>
+                `;
+                showMoreBtn.style.display = 'none';
+                return;
+            }
+            
+            // Render sbaces based on view mode
+            if (allViewMode === 'grid') {
+                container.className = 'sbaces-grid';
+                container.innerHTML = visibleTabs.map(([id, tab]) => createSbaceCardWithHighlight(id, tab, false)).join('');
+            } else {
+                container.className = 'sbaces-list';
+                container.innerHTML = visibleTabs.map(([id, tab]) => createSbaceCardWithHighlight(id, tab, true)).join('');
+            }
+            
+            // Show/hide "Show More" button logic
+            if (searchQuery) {
+                // Hide show more button when searching
+                showMoreBtn.style.display = 'none';
+            } else {
+                // Show/hide "Show More" button for normal view
+                if (sortedTabs.length > allSbacesVisible && !showingAll) {
+                    showMoreBtn.style.display = 'block';
+                    showMoreBtn.textContent = `Show More (${sortedTabs.length - allSbacesVisible} remaining)`;
+                } else {
+                    showMoreBtn.style.display = 'none';
+                }
+            }
+        }
+
+        // Enhanced card creation with search highlighting
+        function createSbaceCardWithHighlight(id, tab, isListView) {
+            const textContent = stripHTML(tab.content || '');
+            const wordCount = textContent.trim() ? textContent.trim().split(/\s+/).length : 0;
+            const lastOpened = formatRelativeTime(tab.lastModified || tab.created);
+            const dateCreated = new Date(tab.created).toLocaleDateString();
+            
+            const listClass = isListView ? ' list-view' : '';
+            
+            // Highlight search terms in name
+            let highlightedName = tab.name;
+            if (searchQuery) {
+                const regex = new RegExp(`(${searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                highlightedName = tab.name.replace(regex, '<mark>$1</mark>');
+            }
+            
+            return `
+                <div class="sbace-card${listClass}" onclick="switchToTab('${id}')">
+                    <div class="sbace-name">${highlightedName}</div>
+                    <div class="sbace-meta">
+                        <div class="sbace-stat">${wordCount} words</div>
+                        <div class="sbace-stat">Opened ${lastOpened}</div>
+                        <div class="sbace-stat">Created ${dateCreated}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Search function to filter sbaces
+        function searchSbaces(query) {
+            searchQuery = query.toLowerCase().trim();
+            
+            if (searchQuery === '') {
+                // Show all sbaces if search is empty
+                filteredTabs = tabs;
+            } else {
+                // Filter tabs based on name and content
+                filteredTabs = {};
+                Object.entries(tabs).forEach(([id, tab]) => {
+                    const nameMatch = tab.name.toLowerCase().includes(searchQuery);
+                    const contentMatch = stripHTML(tab.content || '').toLowerCase().includes(searchQuery);
+                    
+                    if (nameMatch || contentMatch) {
+                        filteredTabs[id] = tab;
+                    }
+                });
+            }
+            
+            // Reset pagination when searching
+            showingAll = false;
+            
+            // Update the display
+            updateAllSbaces();
+        }
+
+        // Create sbace card HTML
+        function createSbaceCard(id, tab, isListView) {
+            const textContent = stripHTML(tab.content || '');
+            const wordCount = textContent.trim() ? textContent.trim().split(/\s+/).length : 0;
+            const lastOpened = formatRelativeTime(tab.lastModified || tab.created);
+            const dateCreated = new Date(tab.created).toLocaleDateString();
+            
+            const listClass = isListView ? ' list-view' : '';
+            
+            return `
+                <div class="sbace-card${listClass}" onclick="switchToTab('${id}')">
+                    <div class="sbace-name">${tab.name}</div>
+                    <div class="sbace-meta">
+                        <div class="sbace-stat">${wordCount} words</div>
+                        <div class="sbace-stat">Opened ${lastOpened}</div>
+                        <div class="sbace-stat">Created ${dateCreated}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Toggle recent view mode
+        function toggleRecentView(mode) {
+            recentViewMode = mode;
+            
+            const gridBtn = document.getElementById('recentGridBtn');
+            const listBtn = document.getElementById('recentListBtn');
+            
+            if (mode === 'grid') {
+                gridBtn.classList.add('active');
+                listBtn.classList.remove('active');
+                gridBtn.querySelector('img').src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-grid.png&color=ffffff';
+                listBtn.querySelector('img').src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-list.png&color=97979f';
+            } else {
+                listBtn.classList.add('active');
+                gridBtn.classList.remove('active');
+                listBtn.querySelector('img').src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-list.png&color=ffffff';
+                gridBtn.querySelector('img').src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-grid.png&color=97979f';
+            }
+            
+            updateAllSbaces();
+        }
+
+        // Show more sbaces
+        function showMoreSbaces() {
+            showingAll = true;
+            updateAllSbaces();
+            
+            const showMoreBtn = document.getElementById('showMoreBtn');
+            showMoreBtn.textContent = 'Show Less';
+            showMoreBtn.onclick = showLessSbaces;
+        }
+
+        // Show less sbaces
+        function showLessSbaces() {
+            showingAll = false;
+            updateAllSbaces();
+            
+            const showMoreBtn = document.getElementById('showMoreBtn');
+            showMoreBtn.onclick = showMoreSbaces;
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            sidebarCollapsed = !sidebarCollapsed;
+            const toggleIcon = document.querySelector('.sidebar-toggle-icon');
+            const toggleBtn = document.querySelector('.sidebar-toggle');
+            const homeBtn = document.querySelector('.home-btn');
+            const newSpaceBtn = document.querySelector('.new-space-btn');
+            const trashBtn = document.querySelector('.trash-btn');
+            
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                layout.classList.add('collapsed');
+                toggleIcon.src = 'https://utils.marifyt.com/icons/close-sidebar.png';
+                toggleBtn.setAttribute('data-tooltip-text', 'Expand');
+                
+                // Add tooltips for collapsed state
+                homeBtn.classList.add('tooltip-bottom');
+                newSpaceBtn.classList.add('tooltip-bottom');
+                trashBtn.classList.add('tooltip-bottom');
+            } else {
+                sidebar.classList.remove('collapsed');
+                layout.classList.remove('collapsed');
+                toggleIcon.src = 'https://utils.marifyt.com/icons/open-sidebar.png';
+                toggleBtn.setAttribute('data-tooltip-text', 'Collapse');
+                
+                // Remove tooltips for expanded state
+                homeBtn.classList.remove('tooltip-bottom');
+                newSpaceBtn.classList.remove('tooltip-bottom');
+                trashBtn.classList.remove('tooltip-bottom');
+            }
+            
+            localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
+            hideOptionsBar();
+        }
+
+        // Load sidebar state
+        function loadSidebarState() {
+            const saved = localStorage.getItem('sidebarCollapsed');
+            if (saved === 'true') {
+                sidebarCollapsed = true;
+                sidebar.classList.add('collapsed');
+                layout.classList.add('collapsed');
+                const toggleIcon = document.querySelector('.sidebar-toggle-icon');
+                const toggleBtn = document.querySelector('.sidebar-toggle');
+                toggleIcon.src = 'https://utils.marifyt.com/icons/close-sidebar.png';
+                toggleBtn.setAttribute('data-tooltip-text', 'Expand');
+                
+                // Add tooltips for collapsed state
+                const homeBtn = document.querySelector('.home-btn');
+                const newSpaceBtn = document.querySelector('.new-space-btn');
+                const trashBtn = document.querySelector('.trash-btn');
+                homeBtn.classList.add('tooltip-bottom');
+                newSpaceBtn.classList.add('tooltip-bottom');
+                trashBtn.classList.add('tooltip-bottom');
+            } else {
+                const toggleBtn = document.querySelector('.sidebar-toggle');
+                toggleBtn.setAttribute('data-tooltip-text', 'Collapse');
+                
+                // Remove tooltips for expanded state
+                const homeBtn = document.querySelector('.home-btn');
+                const newSpaceBtn = document.querySelector('.new-space-btn');
+                const trashBtn = document.querySelector('.trash-btn');
+                homeBtn.classList.remove('tooltip-bottom');
+                newSpaceBtn.classList.remove('tooltip-bottom');
+                trashBtn.classList.remove('tooltip-bottom');
+            }
+        }
+
+        // Hide options bar
+        function hideOptionsBar() {
+            if (currentOptionsBar) {
+                currentOptionsBar.classList.remove('show');
+                currentOptionsBar = null;
+            }
+        }
+
+        // Open rename modal from header
+        function openRenameFromHeader() {
+            if (currentTabId && tabs[currentTabId]) {
+                showRenameModal(currentTabId);
+            }
+        }
+
+        // Theme toggle functionality
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            
+            function updateThemeIcon(theme) {
+                if (theme === 'light') {
+                    themeIcon.src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fdark.png&color=ffffff';
+                } else {
+                    themeIcon.src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Flight.png&color=ffffff';
+                }
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+            
+            // Set initial theme based on saved preference
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        // Placeholder handler
+        function updatePlaceholder() {
+            const hasContent = editor.innerText.trim().length > 0;
+            placeholder.style.display = hasContent ? 'none' : 'block';
+        }
+
+        function showDeleteModal(tabId, tabName) {
+            tabToDelete = tabId;
+            const modal = document.getElementById('deleteModal');
+            const message = document.getElementById('deleteModalMessage');
+            
+            if (Object.keys(tabs).length <= 1) {
+                message.textContent = "Can't delete the last space!";
+                const confirmBtn = modal.querySelector('.modal-btn.danger');
+                confirmBtn.style.display = 'none';
+            } else {
+                message.textContent = `Are you sure you want to delete "${tabName}"?`;
+                const confirmBtn = modal.querySelector('.modal-btn.danger');
+                confirmBtn.style.display = 'block';
+            }
+            
+            modal.classList.add('show');
+            hideOptionsBar();
+        }
+
+        function hideDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            modal.classList.remove('show');
+            tabToDelete = null;
+        }
+
+        function confirmDelete() {
+            if (tabToDelete && Object.keys(tabs).length > 1) {
+                // Move to trash instead of deleting
+                moveToTrash(tabToDelete);
+                
+                delete tabs[tabToDelete];
+                localStorage.setItem('editorTabs', JSON.stringify(tabs));
+                
+                // Check if we're deleting the currently active tab
+                if (currentTabId === tabToDelete) {
+                    // Go to home instead of switching to another tab
+                    goHome();
+                }
+                
+                renderTabs();
+                if (content.classList.contains('home')) {
+                    updateHomeContent();
+                }
+            }
+            hideDeleteModal();
+        }
+
+        // Clear modal functions
+        function showClearModal() {
+            const modal = document.getElementById('clearModal');
+            modal.classList.add('show');
+        }
+
+        function hideClearModal() {
+            const modal = document.getElementById('clearModal');
+            modal.classList.remove('show');
+        }
+
+        function confirmClear() {
+            document.execCommand('selectAll');
+            document.execCommand('delete');
+            editor.focus();
+            debouncedSave();
+            updatePlaceholder();
+            updateWordCharCount();
+            hideClearModal();
+        }
+
+        // Space name modal functions
+        function showNewSpaceModal() {
+            isRenaming = false;
+            const modal = document.getElementById('spaceNameModal');
+            const title = document.getElementById('spaceModalTitle');
+            const input = document.getElementById('spaceNameInput');
+            const confirmBtn = modal.querySelector('.modal-btn.confirm');
+            
+            title.textContent = 'New Sbace';
+            input.value = '';
+            input.placeholder = 'Sbace name...';
+            confirmBtn.textContent = 'Create';
+            
+            modal.classList.add('show');
+            setTimeout(() => input.focus(), 100);
+        }
+
+        function showRenameModal(tabId) {
+            isRenaming = true;
+            tabToRename = tabId;
+            const modal = document.getElementById('spaceNameModal');
+            const title = document.getElementById('spaceModalTitle');
+            const input = document.getElementById('spaceNameInput');
+            const confirmBtn = modal.querySelector('.modal-btn.confirm');
+            
+            title.textContent = 'Rename Space';
+            input.value = tabs[tabId].name;
+            input.placeholder = 'Sbace name...';
+            confirmBtn.textContent = 'Rename';
+            
+            modal.classList.add('show');
+            setTimeout(() => {
+                input.focus();
+                input.select();
+            }, 100);
+            hideOptionsBar();
+        }
+
+        function hideSpaceNameModal() {
+            const modal = document.getElementById('spaceNameModal');
+            modal.classList.remove('show');
+            isRenaming = false;
+            tabToRename = null;
+        }
+
+        function confirmSpaceName() {
+            const input = document.getElementById('spaceNameInput');
+            const name = input.value.trim();
+            
+            if (!name) return;
+
+            if (isRenaming && tabToRename) {
+                tabs[tabToRename].name = name;
+                localStorage.setItem('editorTabs', JSON.stringify(tabs));
+                renderTabs();
+                
+                if (currentTabId === tabToRename) {
+                    pageTitle.querySelector('.title-text').textContent = name;
+                    updateUrl(name);
+                }
+                
+                if (content.classList.contains('home')) {
+                    updateHomeContent();
+                }
+            } else {
+                createNewTab(name);
+            }
+            
+            hideSpaceNameModal();
+        }
+
+        // Save current tab content
+        function saveCurrentTab() {
+            if (currentTabId && tabs[currentTabId]) {
+                tabs[currentTabId].content = editor.innerHTML;
+                tabs[currentTabId].lastModified = Date.now();
+                localStorage.setItem('editorTabs', JSON.stringify(tabs));
+                
+                if (content.classList.contains('home')) {
+                    updateHomeContent();
+                }
+            }
+        }
+
+        // Load all tabs
+        function loadTabs() {
+            const savedTabs = localStorage.getItem('editorTabs');
+            const savedActiveTab = localStorage.getItem('activeTabId');
+            
+            if (savedTabs) {
+                tabs = JSON.parse(savedTabs);
+                tabCounter = Math.max(...Object.keys(tabs).map(id => parseInt(id.replace('tab_', '')))) + 1 || 0;
+            }
+            
+            // If no tabs, create default one
+            if (Object.keys(tabs).length === 0) {
+                createNewTab('Untitled');
+                return;
+            }
+            
+            // Render all tabs
+            renderTabs();
+            loadSidebarState();
+        }
+
+        // Create new tab
+        function createNewTab(name = null) {
+            const tabId = `tab_${tabCounter++}`;
+            const tabName = name || `Space ${Object.keys(tabs).length + 1}`;
+            
+            // Save current tab before creating new one
+            if (currentTabId) {
+                saveCurrentTab();
+            }
+            
+            tabs[tabId] = {
+                name: tabName,
+                content: '',
+                created: Date.now(),
+                lastModified: Date.now(),
+                starred: false
+            };
+            
+            localStorage.setItem('editorTabs', JSON.stringify(tabs));
+            renderTabs();
+            switchToTab(tabId);
+            
+            if (content.classList.contains('home')) {
+                updateHomeContent();
+            }
+        }
+
+        function toggleStarTab(tabId) {
+            if (tabs[tabId]) {
+                tabs[tabId].starred = !tabs[tabId].starred;
+                localStorage.setItem('editorTabs', JSON.stringify(tabs));
+                renderTabs();
+                updateHeaderButtons(); // Add this line
+                
+                if (content.classList.contains('home')) {
+                    updateHomeContent();
+                }
+            }
+            hideOptionsBar();
+        }
+
+        // Delete tab
+        function deleteTab(tabId) {
+            const tabName = tabs[tabId].name;
+            showDeleteModal(tabId, tabName);
+        }
+
+        // Switch to tab
+        function switchToTab(tabId) {
+            // Save current tab
+            if (currentTabId) {
+                saveCurrentTab();
+            }
+            
+            // Update current tab
+            currentTabId = tabId;
+            localStorage.setItem('activeTabId', tabId);
+            
+            // Remove home class and deactivate home button
+            content.classList.remove('home');
+            homeBtn.classList.remove('active');
+            
+            // Show download button and auto-save indicator
+            downloadBtn.style.display = 'block';
+            
+            // Load tab content
+            editor.innerHTML = tabs[tabId].content || '';
+            pageTitle.querySelector('.title-text').textContent = tabs[tabId].name;
+            updateUrl(tabs[tabId].name);
+            
+            // Update active tab in UI
+            document.querySelectorAll('.nav-link').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to current tab
+            const activeTab = document.querySelector(`[data-tab-id="${tabId}"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+            
+            // Position cursor at the end and scroll to bottom with animation
+            setTimeout(() => {
+                editor.focus();
+                
+                // Move cursor to the end
+                const range = document.createRange();
+                const selection = window.getSelection();
+                
+                if (editor.childNodes.length > 0) {
+                    // Find the last text node or element
+                    let lastNode = editor;
+                    while (lastNode.lastChild) {
+                        lastNode = lastNode.lastChild;
+                    }
+                    
+                    if (lastNode.nodeType === Node.TEXT_NODE) {
+                        range.setStart(lastNode, lastNode.textContent.length);
+                    } else {
+                        range.setStartAfter(lastNode);
+                    }
+                } else {
+                    range.setStart(editor, 0);
+                }
+                
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                
+                // Smooth scroll to bottom
+                content.scrollTo({
+                    top: content.scrollHeight,
+                    behavior: 'smooth'
+                });
+                
+                checkActiveFormatting();
+                updatePlaceholder();
+                updateWordCharCount();
+            }, 50);
+            
+            hideOptionsBar();
+            updateHeaderButtons();
+        }
+
+        
+
+        // Show options bar for space options
+        function showSpaceOptions(event, tabId) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Hide any existing options bar
+            hideOptionsBar();
+            
+            const optionsBar = document.createElement('div');
+            optionsBar.className = 'options-bar show';
+            optionsBar.innerHTML = `
+                <button class="options-item tooltip-bottom" onclick="showRenameModal('${tabId}')" data-tooltip-text="Rename">
+                    <img src="https://utils.marifyt.com/icons/edit.png" alt="Edit">
+                </button>
+                <button class="options-item tooltip-bottom" onclick="toggleStarTab('${tabId}')" data-tooltip-text="${tabs[tabId].starred ? 'Unstar' : 'Star'}">
+                    <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fstar5.png&color=e09614" alt="Star">
+                </button>
+                <button class="options-item tooltip-bottom" onclick="deleteTab('${tabId}')" data-tooltip-text="Delete">
+                    <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Ftrash.png&color=ff3030" alt="Delete">
+                </button>
+            `;
+            
+            const optionsBtn = event.target.closest('.nav-options');
+            optionsBtn.appendChild(optionsBar);
+            currentOptionsBar = optionsBar;
+            
+            // Close options bar when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', function closeOptionsBar(e) {
+                    if (!optionsBar.contains(e.target) && !optionsBtn.contains(e.target)) {
+                        hideOptionsBar();
+                        document.removeEventListener('click', closeOptionsBar);
+                    }
+                });
+            }, 0);
+        }
+
+        // Render all tabs
+        function renderTabs() {
+            starredSpaces.innerHTML = '';
+            recentSpaces.innerHTML = '';
+            
+            // Separate starred and non-starred tabs
+            const starredTabs = [];
+            const normalTabs = [];
+            
+            Object.entries(tabs).forEach(([tabId, tab]) => {
+                if (tab.starred) {
+                    starredTabs.push([tabId, tab]);
+                } else {
+                    normalTabs.push([tabId, tab]);
+                }
+            });
+            
+            // Sort by last modified
+            starredTabs.sort((a, b) => {
+                const aModified = a[1].lastModified || a[1].created;
+                const bModified = b[1].lastModified || b[1].created;
+                return bModified - aModified;
+            });
+            
+            normalTabs.sort((a, b) => {
+                const aModified = a[1].lastModified || a[1].created;
+                const bModified = b[1].lastModified || b[1].created;
+                return bModified - aModified;
+            });
+            
+            // Show/hide starred section
+            starredSection.style.display = starredTabs.length > 0 ? 'block' : 'none';
+            
+            // Render starred tabs
+            starredTabs.forEach(([tabId, tab]) => {
+                const navItem = createNavItem(tabId, tab, true);
+                starredSpaces.appendChild(navItem);
+            });
+            
+            // Render normal tabs
+            normalTabs.forEach(([tabId, tab]) => {
+                const navItem = createNavItem(tabId, tab, false);
+                recentSpaces.appendChild(navItem);
+            });
+        }
+
+        // Create navigation item
+        function createNavItem(tabId, tab, isStarred) {
+            const navItem = document.createElement('div');
+            navItem.className = 'nav-item';
+            
+            const iconSrc = isStarred 
+                ? 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fstar5.png&color=ffffff'
+                : 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fpage.png&color=ffffff';
+            
+            navItem.innerHTML = `
+                <a href="#" class="nav-link ${currentTabId === tabId ? 'active' : ''}" data-tab-id="${tabId}" onclick="event.preventDefault(); switchToTab('${tabId}')">
+                    <img class="nav-icon" src="${iconSrc}" alt="Space">
+                    <span class="nav-text">${tab.name}</span>
+                </a>
+                <div class="nav-options" onclick="showSpaceOptions(event, '${tabId}')">
+                    <img src="https://utils.marifyt.com/icons/options.png" alt="Options">
+                </div>
+            `;
+            
+            return navItem;
+        }
+
+        // Format text function
+        function formatText(format) {
+            // Remove old active buttons
+            toolBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Find the button that matches the format
+            const button = Array.from(toolBtns).find(btn => {
+                const imgAlt = btn.querySelector('img')?.alt.toLowerCase();
+                if (format === 'bold' && imgAlt === 'bold') return true;
+                if (format === 'italic' && imgAlt === 'italic') return true;
+                if (format === 'underline' && imgAlt === 'underline') return true;
+                if (format === 'orderedList' && imgAlt === 'numbered list') return true;
+                if (format === 'unorderedList' && imgAlt === 'bullet list') return true;
+                return false;
+            });
+            
+            // Make button active
+            if (button) button.classList.add('active');
+            
+            // Apply the format
+            document.execCommand(format === 'orderedList' ? 'insertOrderedList' : 
+                                format === 'unorderedList' ? 'insertUnorderedList' : format);
+            
+            // Focus editor
+            editor.focus();
+            debouncedSave();
+            updatePlaceholder();
+            updateWordCharCount();
+        }
+
+        // Undo action
+        function undoAction() {
+            document.execCommand('undo');
+            editor.focus();
+            debouncedSave();
+            updatePlaceholder();
+            updateWordCharCount();
+        }
+
+        // Redo action
+        function redoAction() {
+            document.execCommand('redo');
+            editor.focus();
+            debouncedSave();
+            updatePlaceholder();
+            updateWordCharCount();
+        }
+
+        // Copy text with formatting
+        function copyText() {
+            const selection = window.getSelection();
+            
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                // Got selected text, copy the formatted html
+                const range = selection.getRangeAt(0);
+                const container = document.createElement('div');
+                container.appendChild(range.cloneContents());
+                const htmlContent = container.innerHTML;
+                const textContent = container.textContent || container.innerText;
+                
+                // Use the new clipboard api for formatting
+                if (navigator.clipboard && navigator.clipboard.write) {
+                    const clipboardItem = new ClipboardItem({
+                        'text/html': new Blob([htmlContent], { type: 'text/html' }),
+                        'text/plain': new Blob([textContent], { type: 'text/plain' })
+                    });
+                    
+                    navigator.clipboard.write([clipboardItem])
+                        .then(() => {
+                            // Copy success
+                        })
+                        .catch(err => {
+                            console.error('Could not copy formatting: ', err);
+                            // Fallback to plain text
+                            navigator.clipboard.writeText(textContent);
+                        });
+                } else {
+                    // Fallback for old browsers
+                    navigator.clipboard.writeText(textContent)
+                        .catch(err => {
+                            console.error('Could not copy: ', err);
+                        });
+                }
+            } else {
+                // No selection, copy all with formatting
+                const htmlContent = editor.innerHTML;
+                const textContent = editor.innerText;
+                
+                if (navigator.clipboard && navigator.clipboard.write) {
+                    const clipboardItem = new ClipboardItem({
+                        'text/html': new Blob([htmlContent], { type: 'text/html' }),
+                        'text/plain': new Blob([textContent], { type: 'text/plain' })
+                    });
+                    
+                    navigator.clipboard.write([clipboardItem])
+                        .then(() => {
+                            // Copy success
+                        })
+                        .catch(err => {
+                            console.error('Could not copy formatting: ', err);
+                            // Fallback to plain text
+                            navigator.clipboard.writeText(textContent);
+                        });
+                } else {
+                    // Fallback for old browsers
+                    navigator.clipboard.writeText(textContent)
+                        .catch(err => {
+                            console.error('Could not copy: ', err);
+                        });
+                }
+            }
+            editor.focus();
+        }
+
+        // Check active formatting
+        function checkActiveFormatting() {
+            // Remove all active
+            toolBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Enable all buttons
+            toolBtns.forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            });
+            
+            // Check each format
+            const isBold = document.queryCommandState('bold');
+            const isItalic = document.queryCommandState('italic');
+            const isUnderline = document.queryCommandState('underline');
+            const isOrderedList = document.queryCommandState('insertOrderedList');
+            const isUnorderedList = document.queryCommandState('insertUnorderedList');
+            
+            // Update button states
+            toolBtns.forEach(btn => {
+                const imgAlt = btn.querySelector('img')?.alt.toLowerCase();
+                if (isBold && imgAlt === 'bold') btn.classList.add('active');
+                if (isItalic && imgAlt === 'italic') btn.classList.add('active');
+                if (isUnderline && imgAlt === 'underline') btn.classList.add('active');
+                if (isOrderedList && imgAlt === 'numbered list') btn.classList.add('active');
+                if (isUnorderedList && imgAlt === 'bullet list') btn.classList.add('active');
+            });
+        }
+
+        // Check for auto-formatting patterns
+        function checkAutoFormat(e) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            
+            const range = selection.getRangeAt(0);
+            let textNode = range.startContainer;
+            
+            // If we're not in a text node, try to find one
+            if (textNode.nodeType !== Node.TEXT_NODE) {
+                if (textNode.childNodes.length > 0) {
+                    textNode = textNode.childNodes[range.startOffset - 1] || textNode.childNodes[0];
+                    if (!textNode || textNode.nodeType !== Node.TEXT_NODE) return;
+                } else {
+                    return;
+                }
+            }
+            
+            const fullText = textNode.textContent;
+            const cursorPos = range.startOffset;
+            
+            // Get text before cursor
+            const beforeCursor = fullText.substring(0, cursorPos);
+            
+            // Check for numbered list pattern (any number + . + space)
+            const numberedListPattern = /(\d+)\.\s$/;
+            const numberedMatch = beforeCursor.match(numberedListPattern);
+            
+            if (numberedMatch && e.key === ' ') {
+                e.preventDefault();
+                
+                // Remove the pattern text
+                const patternLength = numberedMatch[0].length;
+                const newText = fullText.substring(patternLength);
+                textNode.textContent = newText;
+                
+                // Position cursor at start of remaining text
+                const newRange = document.createRange();
+                newRange.setStart(textNode, 0);
+                newRange.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(newRange);
+                
+                // Apply numbered list formatting
+                setTimeout(() => formatText('orderedList'), 0);
+                return;
+            }
+            
+            // Check for bullet list pattern (* + space)
+            const bulletListPattern = /\*\s$/;
+            const bulletMatch = beforeCursor.match(bulletListPattern);
+            
+            if (bulletMatch && e.key === ' ') {
+                e.preventDefault();
+                
+                // Remove the pattern text
+                const patternLength = bulletMatch[0].length;
+                const newText = fullText.substring(patternLength);
+                textNode.textContent = newText;
+                
+                // Position cursor at start of remaining text
+                const newRange = document.createRange();
+                newRange.setStart(textNode, 0);
+                newRange.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(newRange);
+                
+                // Apply bullet list formatting
+                setTimeout(() => formatText('unorderedList'), 0);
+                return;
+            }
+        }
+
+        // Event Listeners
+
+        // Quick find input
+        document.getElementById('quickFindInput').addEventListener('input', function(e) {
+            const searchText = e.target.value;
+            findText = searchText;
+            highlightMatches(searchText);
+        });
+
+        document.getElementById('quickFindInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                nextMatch();
+            } else if (e.key === 'Escape') {
+                hideQuickFind();
+            }
+        });
+
+        // Find and replace input
+        document.getElementById('findInput').addEventListener('input', updateFindCounter);
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Check for auto-formatting first
+            if (e.key === ' ') {
+                checkAutoFormat(e);
+            }
+            
+            // Quick find shortcut
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                showQuickFind();
+                return;
+            }
+            
+            // Undo/redo shortcuts
+            if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                undoAction();
+            } else if ((e.ctrlKey && e.shiftKey && e.key === 'Z') || 
+                    (e.ctrlKey && e.key === 'y')) {
+                e.preventDefault();
+                redoAction();
+            }
+            
+            // Formatting shortcuts
+            if (e.ctrlKey) {
+                if (e.key === 'b') {
+                    e.preventDefault();
+                    formatText('bold');
+                } else if (e.key === 'i') {
+                    e.preventDefault();
+                    formatText('italic');
+                } else if (e.key === 'u') {
+                    e.preventDefault();
+                    formatText('underline');
+                }
+            }
+            
+            // Escape to close modals and options bar
+            if (e.key === 'Escape') {
+                hideDeleteModal();
+                hideClearModal();
+                hideSpaceNameModal();
+                hideFindReplaceModal();
+                hideTrashModal();
+                hideImportModal();
+                hideQuickFind();
+                hideOptionsBar();
+                
+                // Close download dropdown
+                const dropdown = document.getElementById('downloadDropdown');
+                dropdown.classList.remove('show');
+            }
+
+            // Enter to confirm in modals
+            if (e.key === 'Enter') {
+                const spaceModal = document.getElementById('spaceNameModal');
+                if (spaceModal.classList.contains('show')) {
+                    e.preventDefault();
+                    confirmSpaceName();
+                }
+            }
+        });
+
+        // Track cursor position on selection change
+        document.addEventListener('selectionchange', function() {
+            if (document.activeElement === editor) {
+                checkActiveFormatting();
+            }
+        });
+
+        // Help function to get list level
+        function getListLevel(element) {
+            let level = 0;
+            let parent = element.parentNode;
+            while (parent && parent !== editor) {
+                if (parent.nodeName === 'OL' || parent.nodeName === 'UL') {
+                    level++;
+                }
+                parent = parent.parentNode;
+            }
+            return level;
+        }
+
+        // Improved list handling
+        editor.addEventListener('keydown', function(e) {
+            // Trigger typewriter scrolling on keydown
+            if (typewriterScrolling) {
+                setTimeout(typewriterScroll, 0);
+            }
+            
+            // Save content on any change
+            debouncedSave();
+            
+            // Shift + Enter = Enter
+            if (e.key === 'Enter' && e.shiftKey) {
+                e.preventDefault();
+                document.execCommand('insertLineBreak');
+                updatePlaceholder();
+                updateWordCharCount();
+                return;
+            }
+            
+            // Enter key handling for lists
+            if (e.key === 'Enter') {
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
+                
+                const range = selection.getRangeAt(0);
+                const node = selection.anchorNode;
+                const listItem = node ? node.parentNode.closest('li') : null;
+                
+                if (listItem) {
+                    const listItemText = listItem.textContent.trim();
+                    
+                    // Break out of list if empty
+                    if (listItemText === '') {
+                        e.preventDefault();
+                        
+                        // Create a new paragraph
+                        const newPara = document.createElement('p');
+                        newPara.innerHTML = '<br>';
+                        
+                        // Insert after the list
+                        if (listItem.parentNode.parentNode) {
+                            listItem.parentNode.parentNode.insertBefore(newPara, listItem.parentNode.nextSibling);
+                        } else {
+                            editor.appendChild(newPara);
+                        }
+                        
+                        // Move cursor to new paragraph
+                        const newRange = document.createRange();
+                        newRange.selectNodeContents(newPara);
+                        newRange.collapse(true);
+                        selection.removeAllRanges();
+                        selection.addRange(newRange);
+                        
+                        updatePlaceholder();
+                        updateWordCharCount();
+                        return;
+                    }
+                }
+            }
+            
+            // Tab handler for indent
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const selection = window.getSelection();
+                const node = selection.anchorNode;
+                let listItem = node;
+                
+                // Find the list item
+                while (listItem && listItem !== editor && listItem.nodeName !== 'LI') {
+                    listItem = listItem.parentNode;
+                }
+                
+                if (listItem && listItem.nodeName === 'LI') {
+                    // In a list
+                    const currentLevel = getListLevel(listItem);
+                    
+                    if (e.shiftKey) {
+                        // Unindent
+                        if (currentLevel > 0) {
+                            document.execCommand('outdent');
+                        }
+                    } else {
+                        // Get current list item element
+                        const range = selection.getRangeAt(0);
+                        const curListItem = range.startContainer.parentElement.closest('li');
+                        
+                        // Only indent current item
+                        if (curListItem) {
+                            // Save current selection
+                            const savedSelection = {
+                                startOffset: range.startOffset,
+                                startContainer: range.startContainer
+                            };
+                            
+                            // Select only current item
+                            const listRange = document.createRange();
+                            listRange.selectNodeContents(curListItem);
+                            selection.removeAllRanges();
+                            selection.addRange(listRange);
+                            
+                            // Indent it
+                            document.execCommand('indent');
+                            
+                            // Fix list style
+                            const newLevel = getListLevel(curListItem);
+                            const newParentList = curListItem.parentElement;
+                            
+                            if (newLevel % 2 === 1) {
+                                newParentList.style.listStyleType = 'lower-alpha';
+                            } else {
+                                newParentList.style.listStyleType = 'decimal';
+                            }
+                            
+                            // Restore selection
+                            const newRange = document.createRange();
+                            newRange.setStart(savedSelection.startContainer, savedSelection.startOffset);
+                            newRange.collapse(true);
+                            selection.removeAllRanges();
+                            selection.addRange(newRange);
+                        }
+                    }
+                } else {
+                    // Not in a list, add tab character
+                    document.execCommand('insertHTML', false, '&nbsp;&nbsp;&nbsp;&nbsp;');
+                }
+                updatePlaceholder();
+                updateWordCharCount();
+            }
+            
+            // Backspace key handling for lists
+            if (e.key === 'Backspace') {
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
+                
+                const range = selection.getRangeAt(0);
+                const node = selection.anchorNode;
+                const listItem = node ? node.parentNode.closest('li') : null;
+                
+                if (listItem && range.startOffset === 0) {
+                    const listItemText = listItem.textContent.trim();
+                    
+                    // Unindent if at beginning of list item
+                    if (listItemText === '') {
+                        e.preventDefault();
+                        document.execCommand('outdent');
+                        updatePlaceholder();
+                        updateWordCharCount();
+                        return;
+                    }
+                }
+            }
+        });
+
+        // Make sure editor grows with text
+        editor.addEventListener('input', function() {
+            // Check formatting after text change
+            setTimeout(checkActiveFormatting, 0);
+            debouncedSave();
+            updatePlaceholder();
+            updateWordCharCount();
+        });
+
+        // Check formatting on focus
+        editor.addEventListener('focus', function() {
+            checkActiveFormatting();
+            updatePlaceholder();
+            updateWordCharCount();
+        });
+
+        // Update placeholder on blur
+        editor.addEventListener('blur', function() {
+            updatePlaceholder();
+        });
+
+        // Save content before page unload
+        window.addEventListener('beforeunload', function() {
+            if (currentTabId) {
+                saveCurrentTab();
+            }
+        });
+
+        // Update word count when selection changes
+        document.addEventListener('selectionchange', function() {
+            if (document.activeElement === editor) {
+                updateWordCharCount();
+            }
+        });
+
+        // Prevent paste of formatted text
+        editor.addEventListener('paste', function(e) {
+            e.preventDefault();
+            
+            // Get clipboard data
+            const clipboardData = e.clipboardData || window.clipboardData;
+            
+            // Try to get HTML first, then fallback to plain text
+            let htmlContent = clipboardData.getData('text/html');
+            const textContent = clipboardData.getData('text/plain');
+            
+            if (htmlContent) {
+                // Clean the HTML to only allow supported formatting
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlContent;
+                
+                // Allow only certain tags
+                const allowedTags = ['B', 'STRONG', 'I', 'EM', 'U', 'OL', 'UL', 'LI', 'P', 'BR', 'DIV'];
+                const walker = document.createTreeWalker(
+                    tempDiv,
+                    NodeFilter.SHOW_ELEMENT,
+                    {
+                        acceptNode: function(node) {
+                            return allowedTags.includes(node.tagName) ? 
+                                NodeFilter.FILTER_ACCEPT : 
+                                NodeFilter.FILTER_REJECT;
+                        }
+                    }
+                );
+                
+                // Clean up unwanted elements
+                const nodesToRemove = [];
+                let node;
+                while (node = walker.nextNode()) {
+                    if (!allowedTags.includes(node.tagName)) {
+                        nodesToRemove.push(node);
+                    }
+                }
+                
+                nodesToRemove.forEach(node => {
+                    const parent = node.parentNode;
+                    while (node.firstChild) {
+                        parent.insertBefore(node.firstChild, node);
+                    }
+                    parent.removeChild(node);
+                });
+                
+                // Insert the cleaned HTML
+                document.execCommand('insertHTML', false, tempDiv.innerHTML);
+            } else {
+                // Fallback to plain text
+                document.execCommand('insertText', false, textContent);
+            }
+            
+            updatePlaceholder();
+            updateWordCharCount();
+            debouncedSave();
+        });
+
+        // Disable context menu to prevent random formatting
+        editor.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Close options bar when clicking elsewhere
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.nav-options') && !e.target.closest('.options-bar')) {
+                hideOptionsBar();
+            }
+        });
+
+        // Close modals on overlay click
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideDeleteModal();
+            }
+        });
+
+        document.getElementById('clearModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideClearModal();
+            }
+        });
+
+        document.getElementById('spaceNameModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideSpaceNameModal();
+            }
+        });
+
+        document.getElementById('findReplaceModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideFindReplaceModal();
+            }
+        });
+
+        document.getElementById('trashModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideTrashModal();
+            }
+        });
+
+        document.getElementById('importModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideImportModal();
+            }
+        });
+
+        // Initialise everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initThemeToggle();
+            // If you need other one-off startup calls, put them here
+        });
+
+        // Add this after your other event listeners
+        document.getElementById('quickFindInput').addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent the click from bubbling up
+        });
+
+        // Also prevent the container from closing
+        document.getElementById('quickFindOverlay').addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent clicks inside overlay from closing it
+        });
+
+        // Toggle all view mode
+        function toggleAllView(mode) {
+            allViewMode = mode;
+            
+            const gridBtn = document.getElementById('allGridBtn');
+            const listBtn = document.getElementById('allListBtn');
+            
+            if (mode === 'grid') {
+                gridBtn.classList.add('active');
+                listBtn.classList.remove('active');
+                gridBtn.querySelector('img').src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-grid.png&color=ffffff';
+                listBtn.querySelector('img').src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-list.png&color=97979f';
+            } else {
+                listBtn.classList.add('active');
+                gridBtn.classList.remove('active');
+                listBtn.querySelector('img').src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-list.png&color=ffffff';
+                gridBtn.querySelector('img').src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-grid.png&color=97979f';
+            }
+            
+            updateAllSbaces();
+        }
+
+        // Show more sbaces
+        function showMoreSbaces() {
+            showingAll = true;
+            updateAllSbaces();
+            
+            const showMoreBtn = document.getElementById('showMoreBtn');
+            showMoreBtn.textContent = 'Show Less';
+            showMoreBtn.onclick = showLessSbaces;
+        }
+
+        // Show less sbaces
+        function showLessSbaces() {
+            showingAll = false;
+            updateAllSbaces();
+            
+            const showMoreBtn = document.getElementById('showMoreBtn');
+            showMoreBtn.onclick = showMoreSbaces;
+        }   
+
+        createNavItem 
+    </script>
+</body>
+</html>
