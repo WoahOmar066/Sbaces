@@ -1228,6 +1228,48 @@
         zoom: 130%;
     }
 
+    /* Custom spell check styling - misspelled words */
+    #editor *::-webkit-spelling-error-decoration {
+        text-decoration: none !important;
+        background-color: #8b00007c !important; /* Dark red with transparency */
+        padding: 2px 4px !important;
+        border-radius: 4px !important;
+        box-decoration-break: clone !important; /* Ensures styling works across line breaks */
+    }
+
+    /* Custom grammar check styling - wrong place words */
+    #editor *::-webkit-grammar-error-decoration {
+        text-decoration: none !important;
+        background-color: #8b8b8b48 !important; /* Gray with transparency */
+        padding: 2px 4px !important;
+        border-radius: 4px !important;
+        box-decoration-break: clone !important;
+    }
+
+    /* Firefox fallback for spelling errors */
+    #editor *::spelling-error {
+        text-decoration: underline #ff4545bb !important;
+        background-color: #8b000038 !important;
+        padding: 2px 4px !important;
+        border-radius: 4px !important;
+        text-underline-offset: 6px !important; /* Adjust underline offset for better visibility */
+    }
+
+    /* Firefox fallback for grammar errors */
+    #editor *::grammar-error {
+        text-decoration: underline #8b8b8bbb !important;
+        background-color: #8b8b8b38 !important;
+        padding: 4px 8px !important;
+        border-radius: 4px !important;
+        text-underline-offset: 6px !important; /* Adjust underline offset for better visibility */
+    }
+
+    /* Hide default browser decorations completely */
+    #editor *::-webkit-spelling-error-decoration,
+    #editor *::-webkit-grammar-error-decoration {
+        display: none !important;
+    }
+
     .content::-webkit-scrollbar {
         display: none;
     }
