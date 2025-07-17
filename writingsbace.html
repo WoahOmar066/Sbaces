@@ -1228,19 +1228,31 @@
         zoom: 130%;
     }
 
-    /* Custom spell check styling - misspelled words */
-    #editor *::-webkit-spelling-error-decoration {
-        text-decoration: none !important;
-        background-color: #8b00007c !important; /* Dark red with transparency */
-        padding: 2px 4px !important;
-        border-radius: 4px !important;
-        box-decoration-break: clone !important; /* Ensures styling works across line breaks */
+    #editor {
+        spellcheck: true !important;
+        -webkit-spellcheck: true !important;
+        -webkit-text-decorations-in-effect: auto !important;
+        will-change: contents;
+        -webkit-writing-mode: horizontal-tb;
+        writing-mode: horizontal-tb;
+        text-rendering: optimizeSpeed;
+        -webkit-text-decoration-skip: none;
+        text-decoration-skip: none;
+        -webkit-user-modify: read-write-plaintext-only;
     }
 
-    /* Custom grammar check styling - wrong place words */
+    /* Your existing spell check styles stay the same */
+    #editor *::-webkit-spelling-error-decoration {
+        text-decoration: none !important;
+        background-color: #8b00007c !important;
+        padding: 2px 4px !important;
+        border-radius: 4px !important;
+        box-decoration-break: clone !important;
+    }
+
     #editor *::-webkit-grammar-error-decoration {
         text-decoration: none !important;
-        background-color: #8b8b8b48 !important; /* Gray with transparency */
+        background-color: #8b8b8b48 !important;
         padding: 2px 4px !important;
         border-radius: 4px !important;
         box-decoration-break: clone !important;
@@ -2088,6 +2100,36 @@
             document.addEventListener('click', handleClickOutside);
         }, 0);
     }
+
+    // Add this to your existing JavaScript
+    function forceSpellCheck() {
+        const editor = document.getElementById('editor');
+        
+        // Force browser to re-evaluate spell check
+        const originalSpellCheck = editor.spellcheck;
+        editor.spellcheck = false;
+        editor.spellcheck = originalSpellCheck;
+        
+        // Alternative: Force reflow
+        editor.style.display = 'none';
+        editor.offsetHeight; // Trigger reflow
+        editor.style.display = '';
+    }
+
+    // Trigger spell check more frequently
+    editor.addEventListener('input', function() {
+        // Your existing input handler code...
+        
+        // Force spell check after a very short delay
+        setTimeout(forceSpellCheck, 0);
+    });
+
+    // Also trigger on word boundaries
+    editor.addEventListener('keyup', function(e) {
+        if (e.key === ' ' || e.key === 'Enter' || e.key === 'Tab') {
+            setTimeout(forceSpellCheck, 0);
+        }
+    });
 
     function hideQuickFind() {
         const overlay = document.getElementById('quickFindOverlay');
