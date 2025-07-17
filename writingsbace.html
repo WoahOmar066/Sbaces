@@ -44,7 +44,7 @@
     [data-theme="light"] .nav-options img,
     [data-theme="light"] .view-btn.active img,
     [data-theme="light"] .right-icon,
-    [data-theme="light"] .download-btn {
+    [data-theme="light"] .header-btn img {
         filter: invert(0.55);
     }
 
@@ -1369,7 +1369,7 @@
         padding: 9px 15px;
         padding-right: 35px;
         border: 1px solid var(--border-color);
-        border-radius: 50px;
+        border-radius: 13px;
         background-color: transparent;
         color: var(--text-color);
         font-size: 16px;
@@ -1537,14 +1537,17 @@
     </div>
 
     <div class="header-icons">
-        <button class="theme-toggle tooltip-left" onclick="exportAllData()" data-tooltip-text="Export All Data">
-            <img class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Foutbox.png&color=ffffff" width="18" height="18" alt="Export">
+        <button class="theme-toggle tooltip-left" onclick="setupBackupDirectory()" data-tooltip-text="Backup Folder">
+            <img class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Ffolder5.png&color=ffffff" width="18" height="18" alt="Setup Folder">
+        </button>
+        <button class="theme-toggle tooltip-bottom" onclick="exportAllData()" data-tooltip-text="Export Data">
+            <img class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Foutbox-full.png&color=ffffff" width="18" height="18" alt="Export">
         </button>
         <button class="theme-toggle tooltip-bottom" onclick="importAllData()" data-tooltip-text="Import Data">
-            <img class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Finbox.png&color=ffffff" width="18" height="18" alt="Import">
+            <img class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Finbox-full.png&color=ffffff" width="18" height="18" alt="Import">
         </button>
         <button id="theme-toggle" class="theme-toggle tooltip-bottom" data-tooltip-text="Theme">
-            <img id="theme-icon" class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Flight.png&color=ffffff" width="18" height="18" alt="Theme toggle">
+            <img id="theme-icon" class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Flight-full.png&color=ffffff" width="18" height="18" alt="Theme toggle">
         </button>
     </div>
 
@@ -2513,7 +2516,67 @@
             return markdown;
         }
 
-        function exportAllData() {
+        // Store the directory handle globally
+        let sbacesBackupDirectory = null;
+
+        // Function to setup the backup directory (call this once)
+        async function setupBackupDirectory() {
+            if (!('showDirectoryPicker' in window)) {
+                showToast('File System Access API not supported in this browser');
+                return false;
+            }
+            
+            try {
+                // Let user select the backup directory once
+                const dirHandle = await window.showDirectoryPicker();
+                sbacesBackupDirectory = dirHandle;
+                
+                // Store the directory reference (this will persist for the session)
+                localStorage.setItem('backupDirectoryName', dirHandle.name);
+                showToast(`Backup directory set to: ${dirHandle.name}`);
+                return true;
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    console.error('Error setting up backup directory:', error);
+                }
+                return false;
+            }
+        }
+
+        // Get next backup version number
+        async function getNextBackupVersion() {
+            let version = parseInt(localStorage.getItem('backupVersion') || '0');
+            
+            // If we have a backup directory, check for existing files to determine version
+            if (sbacesBackupDirectory) {
+                try {
+                    let foundExisting = true;
+                    while (foundExisting) {
+                        version++;
+                        const testFilename = `sbaces-backup-${version}.json`;
+                        try {
+                            await sbacesBackupDirectory.getFileHandle(testFilename);
+                            // File exists, increment and try next
+                        } catch {
+                            // File doesn't exist, we can use this version
+                            foundExisting = false;
+                        }
+                    }
+                } catch (error) {
+                    // If there's an error reading the directory, just increment from stored version
+                    version++;
+                }
+            } else {
+                // No directory set, just increment from stored version
+                version++;
+            }
+            
+            localStorage.setItem('backupVersion', version.toString());
+            return version;
+        }
+
+        // Enhanced export function that saves directly to the set directory
+        async function exportAllData() {
             const exportData = {
                 tabs: tabs,
                 trash: JSON.parse(localStorage.getItem('trash') || '[]'),
@@ -2524,11 +2587,50 @@
                 version: '1.0'
             };
             
+            const backupVersion = await getNextBackupVersion();
+            const filename = `sbaces-backup-${backupVersion}.json`;
+            
+            // If we have a backup directory set, use it
+            if (sbacesBackupDirectory && 'showDirectoryPicker' in window) {
+                try {
+                    // Verify we still have permission to write to the directory
+                    const permission = await sbacesBackupDirectory.requestPermission({ mode: 'readwrite' });
+                    
+                    if (permission === 'granted') {
+                        // Create the file in the backup directory
+                        const fileHandle = await sbacesBackupDirectory.getFileHandle(filename, { create: true });
+                        const writable = await fileHandle.createWritable();
+                        
+                        await writable.write(JSON.stringify(exportData, null, 2));
+                        await writable.close();
+                        
+                        showToast(`Backup created: ${filename} in ${sbacesBackupDirectory.name}`);
+                        return;
+                    } else {
+                        // Permission denied, clear the stored directory
+                        sbacesBackupDirectory = null;
+                        localStorage.removeItem('backupDirectoryName');
+                    }
+                } catch (error) {
+                    console.error('Error writing to backup directory:', error);
+                    // Clear the stored directory if there's an error
+                    sbacesBackupDirectory = null;
+                    localStorage.removeItem('backupDirectoryName');
+                }
+            }
+            
+            // If no backup directory is set or there was an error, ask user to set it up
+            if (!sbacesBackupDirectory && 'showDirectoryPicker' in window) {
+                const setupSuccess = await setupBackupDirectory();
+                if (setupSuccess) {
+                    // Try exporting again now that we have a directory
+                    return exportAllData();
+                }
+            }
+            
+            // Fallback to regular download
             const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            
-            const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
-            const filename = `writing-sbace-backup-${date}.json`;
             
             const a = document.createElement('a');
             a.href = url;
@@ -2538,8 +2640,22 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            showToast('Data exported successfully');
+            showToast(`Backup created: ${filename} in Downloads folder`);
         }
+
+        // Initialize backup directory on page load if previously set
+        function initializeBackupDirectory() {
+            const savedDirectoryName = localStorage.getItem('backupDirectoryName');
+            if (savedDirectoryName) {
+                // Show that a directory was previously set
+                showToast(`Backup directory was set to: ${savedDirectoryName} (may need re-permission)`);
+            }
+        }
+
+        // Call this when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeBackupDirectory();
+        });
 
         function importAllData() {
             const fileInput = document.getElementById('fileInput');
@@ -3008,9 +3124,9 @@
             
             function updateThemeIcon(theme) {
                 if (theme === 'light') {
-                    themeIcon.src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fdark.png&color=ffffff';
+                    themeIcon.src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fdark-full.png&color=ffffff';
                 } else {
-                    themeIcon.src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Flight.png&color=ffffff';
+                    themeIcon.src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Flight-full.png&color=ffffff';
                 }
             }
             
