@@ -1067,14 +1067,14 @@
     }
 
     .stat-value {
-        font-size: 24px;
+        font-size: 26px;
         font-weight: 800;
         color: var(--stat-text-color);
         margin-bottom: 6px;
     }
 
     .stat-label {
-        font-size: 17px;
+        font-size: 13px;
         font-weight: 500;
         color: #7a7a7c;
         text-transform: uppercase;
@@ -1229,7 +1229,6 @@
     }
 
     #editor {
-        spellcheck: true !important;
         -webkit-spellcheck: true !important;
         -webkit-text-decorations-in-effect: auto !important;
         will-change: contents;
@@ -1238,7 +1237,6 @@
         text-rendering: optimizeSpeed;
         -webkit-text-decoration-skip: none;
         text-decoration-skip: none;
-        -webkit-user-modify: read-write-plaintext-only;
     }
 
     /* Your existing spell check styles stay the same */
@@ -1708,27 +1706,27 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-value font-bricolage-grotesque" id="statCharacters">0</div>
-                        <div class="stat-label font-share-tech">Characters</div>
+                        <div class="stat-label font-monaco">Characters</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value font-bricolage-grotesque" id="statWords">0</div>
-                        <div class="stat-label font-share-tech">Written Words</div>
+                        <div class="stat-label font-monaco">Written Words</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value font-bricolage-grotesque" id="statLines">0</div>
-                        <div class="stat-label font-share-tech">Written Lines</div>
+                        <div class="stat-label font-monaco">Written Lines</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value font-bricolage-grotesque" id="statSpaces">0</div>
-                        <div class="stat-label font-share-tech">Number of Sbaces</div>
+                        <div class="stat-label font-monaco">Number of Sbaces</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value font-bricolage-grotesque" id="statStorage">0 KB</div>
-                        <div class="stat-label font-share-tech">Local Storage</div>
+                        <div class="stat-label font-monaco">Local Storage</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value font-bricolage-grotesque" id="statLastVisit">Never</div>
-                        <div class="stat-label font-share-tech">Last Visit</div>
+                        <div class="stat-label font-monaco">Last Visit</div>
                     </div>
                 </div>
 
@@ -3455,7 +3453,7 @@
             showDeleteModal(tabId, tabName);
         }
 
-        // Switch to tab
+        // Update your existing switchToTab function
         function switchToTab(tabId) {
             // Save current tab
             if (currentTabId) {
@@ -3489,11 +3487,11 @@
                 activeTab.classList.add('active');
             }
             
-            // Position cursor at the end and scroll to bottom with animation
+            // Position cursor at the end and trigger spell check
             setTimeout(() => {
                 editor.focus();
                 
-                // Move cursor to the end
+                // Move cursor to the very end
                 const range = document.createRange();
                 const selection = window.getSelection();
                 
@@ -3517,22 +3515,32 @@
                 selection.removeAllRanges();
                 selection.addRange(range);
                 
-                // Smooth scroll to bottom
-                content.scrollTo({
-                    top: content.scrollHeight,
-                    behavior: 'smooth'
-                });
+                // Silent space + backspace to trigger spell check
+                setTimeout(() => {
+                    // Insert space
+                    document.execCommand('insertText', false, ' ');
+                    
+                    // Immediately remove the space
+                    setTimeout(() => {
+                        document.execCommand('delete');
+                        
+                        // Smooth scroll to bottom
+                        content.scrollTo({
+                            top: content.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                        
+                        checkActiveFormatting();
+                        updatePlaceholder();
+                        updateWordCharCount();
+                    }, 1);
+                }, 10);
                 
-                checkActiveFormatting();
-                updatePlaceholder();
-                updateWordCharCount();
             }, 50);
             
             hideOptionsBar();
             updateHeaderButtons();
-        }
-
-        
+        }        
 
         // Show options bar for space options
         function showSpaceOptions(event, tabId) {
