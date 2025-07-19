@@ -2099,19 +2099,14 @@
         }, 0);
     }
 
-    // Add this to your existing JavaScript
     function forceSpellCheck() {
         const editor = document.getElementById('editor');
-        
-        // Force browser to re-evaluate spell check
-        const originalSpellCheck = editor.spellcheck;
+        // Toggle spellcheck to nudge the browser
+        const original = editor.spellcheck;
         editor.spellcheck = false;
-        editor.spellcheck = originalSpellCheck;
-        
-        // Alternative: Force reflow
-        editor.style.display = 'none';
-        editor.offsetHeight; // Trigger reflow
-        editor.style.display = '';
+        editor.spellcheck = original;
+        // A simple reflow—no hiding, no scroll reset
+        editor.offsetHeight;
     }
 
     // Trigger spell check more frequently
@@ -3968,14 +3963,7 @@
             }
             return level;
         }
-
-        // Improved list handling
         editor.addEventListener('keydown', function(e) {
-            // Trigger typewriter scrolling on keydown
-            if (typewriterScrolling) {
-                setTimeout(typewriterScroll, 0);
-            }
-            
             // Save content on any change
             debouncedSave();
             
