@@ -1,58 +1,57 @@
 :root {
-    --bg-primary: #141414;
-    --bg-secondary: #1a1a1a;
-    --sidebar-width: 275px;
-    --sidebar-collapsed-width: 50px;
+    --bg-primary: #161616;
+    --bg-secondary: #262627;
+    --bg-hover: #242426;
+    --sidebar-bg: #181717;
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 48px;
     --content-width: 1150px;
-    --text-color: #ffffff;
-    --border-color: #2e2e2e;
-    --header-height: 56px;
-    --toolbar-height: 48px;
-    --logo-color: #c0dff0;
-    --toolbar-color: #141414fb;
-    --stat-bg-color: #ffffff;
-    --stat-text-color: #000000;
+    --text-color: #f4f4f5;
+    --text-muted: #71717a;
+    --border-color: #2e2e32;
+    --header-height: 52px;
+    --toolbar-height: 46px;
+    --logo-color: #ffffff;
+    --stat-bg-color: #111113;
+    --stat-text-color: #f4f4f5;
+    --accent: #ffffff;
+    --danger: #ef4444;
+    --success: #4ade80;
 }
 
 [data-theme="light"] {
-    --toolbar-color: #fffffffb;
     --bg-primary: #ffffff;
-    --bg-secondary: #dbdbdb;
-    --text-color: #333333;
-    --border-color: #979797;
-    --stat-bg-color: #000000;
-    --stat-text-color: #ffffff;
+    --bg-secondary: #f4f4f5;
+    --bg-hover: #e4e4e7;
+    --text-color: #09090b;
+    --text-muted: #71717a;
+    --border-color: #e4e4e7;
+    --stat-bg-color: #f4f4f5;
+    --stat-text-color: #09090b;
+    --accent: #09090b;
 }
 
 [data-theme="light"] .nav-icon,
 [data-theme="light"] #theme-icon,
-[data-theme="light"] .tool-btn img,
-[data-theme="light"] .sidebar-toggle-icon,
-[data-theme="light"] .nav-options img,
-[data-theme="light"] .view-btn.active img,
-[data-theme="light"] .right-icon,
-[data-theme="light"] .header-btn img {
-    filter: invert(0.55);
-}
-
-[data-theme="light"] .options-bar img {
-    filter: invert(0);
+[data-theme="light"] .tool-btn .lucide,
+[data-theme="light"] .sidebar-toggle .lucide,
+[data-theme="light"] .nav-options .lucide,
+[data-theme="light"] .right-icon .lucide,
+[data-theme="light"] .header-btn .lucide {
+    color: #52525b;
 }
 
 [data-theme="light"] .nav-link.active {
-    color: black !important;
+    color: #09090b !important;
 }
 
 [data-theme="light"] .home-btn.active {
-    color: black !important;
+    color: #09090b !important;
 }
 
 [data-theme="light"] .logo-text {
-    color: #000000 !important;
-}
-
-[data-theme="light"] .logo-icon {
-    content: url('https://utils.marifyt.com/api/assets?image=%2Ficons%2Fpage2.png&color=6ab6f0');
+    color: #09090b !important;
+    text-shadow: none !important;
 }
 
 * {
@@ -70,17 +69,27 @@ body {
     overflow: hidden;
 }
 
+.lucide {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    fill: none;
+    flex-shrink: 0;
+    transition: color 0.25s ease;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
 @keyframes slideUp {
-    from { 
+    from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(16px);
     }
-    to { 
+    to {
         opacity: 1;
         transform: translateY(0);
     }
@@ -89,7 +98,7 @@ body {
 @keyframes fadeInDown {
     from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(-8px);
     }
     to {
         opacity: 1;
@@ -100,7 +109,7 @@ body {
 @keyframes fadeInRight {
     from {
         opacity: 0;
-        transform: translateX(-10px);
+        transform: translateX(-8px);
     }
     to {
         opacity: 1;

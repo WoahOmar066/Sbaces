@@ -3,22 +3,17 @@
     position: relative;
 }
 
-.content.home .editor-container {
-    display: none;
-}
+.content.home .editor-container { display: none; }
 
-/* Editor Styles */
+/* Editor */
 #editor {
     width: 100%;
     min-height: 400px;
     color: var(--text-color);
-    padding: 17px;
-    padding-bottom: 100px;
+    padding: 17px 110px 100px 110px;
     margin-bottom: 200px;
-    padding-left: 110px;
-    padding-right: 110px;
     outline: none;
-    border-radius: 8px;
+    border-radius: 0;
     overflow-y: auto;
     white-space: pre-wrap;
     word-break: break-word;
@@ -29,18 +24,14 @@
     -webkit-spellcheck: true !important;
     -webkit-text-decorations-in-effect: auto !important;
     will-change: contents;
-    -webkit-writing-mode: horizontal-tb;
     writing-mode: horizontal-tb;
     text-rendering: optimizeSpeed;
-    -webkit-text-decoration-skip: none;
     text-decoration-skip: none;
 }
 
-#editor * {
-    font-family: 'Lora', serif !important;
-}
+#editor * { font-family: 'Lora', serif !important; }
 
-/* Spell Check Styles */
+/* Spell Check */
 #editor *::-webkit-spelling-error-decoration {
     text-decoration: none !important;
     background-color: #8b00007c !important;
@@ -74,24 +65,21 @@
 }
 
 #editor *::-webkit-spelling-error-decoration,
-#editor *::-webkit-grammar-error-decoration {
-    display: none !important;
-}
+#editor *::-webkit-grammar-error-decoration { display: none !important; }
 
-/* Editor Placeholder */
+/* Placeholder */
 .editor-placeholder {
     position: absolute;
     top: 17px;
     left: 110px;
-    color: #777;
-    opacity: 0.8;
+    color: #52525b;
     pointer-events: none;
     z-index: 1;
     zoom: 130%;
     font-family: 'Lora', serif !important;
 }
 
-/* List Styles */
+/* Lists */
 #editor ol, #editor ul {
     margin: 0 !important;
     padding: 0 !important;
@@ -108,14 +96,8 @@
     font-family: 'Lora', serif !important;
 }
 
-#editor ol li::marker {
-    font-size: inherit;
-}
-
-#editor ul li::marker {
-    font-size: inherit;
-    font-family: 'Lora', serif !important;
-}
+#editor ol li::marker { font-size: inherit; }
+#editor ul li::marker { font-size: inherit; font-family: 'Lora', serif !important; }
 
 #editor ol li p, #editor ul li p {
     margin: 0 !important;
@@ -123,8 +105,7 @@
     font-family: 'Lora', serif !important;
 }
 
-#editor > ol, #editor > ul,
-#editor > p {
+#editor > ol, #editor > ul, #editor > p {
     margin-block-start: 0 !important;
     margin-block-end: 0 !important;
     margin-top: 0 !important;
@@ -132,55 +113,31 @@
     font-family: 'Lora', serif !important;
 }
 
-#editor ol ol {
-    list-style-type: lower-alpha;
-    font-family: 'Lora', serif !important;
-}
+#editor ol ol { list-style-type: lower-alpha; }
+#editor ol ol ol { list-style-type: decimal; }
+#editor ol ol ol ol { list-style-type: lower-alpha; }
 
-#editor ol ol ol {
-    list-style-type: decimal;
-    font-family: 'Lora', serif !important;
-}
+#editor:focus { font-family: 'Lora', serif !important; }
+#editor strong, #editor i { font-family: 'Lora', serif !important; }
 
-#editor ol ol ol ol {
-    font-family: 'Lora', serif !important;
-    list-style-type: lower-alpha;
-}
-
-#editor:focus {
-    border-color: var(--accent-color);
-    font-family: 'Lora', serif !important;
-}
-
-#editor strong, #editor i {
-    font-family: 'Lora', serif !important;
-}
-
-/* Search Highlighting */
+/* Search Highlights */
 #editor mark {
-    background-color: #ffd469ea;
+    background-color: #ffd469e0;
     color: #000;
     padding: 1px 2px;
-    border-radius: 2px;
+    border-radius: 3px;
     font-family: 'Lora', serif !important;
 }
 
 #editor mark.current-match {
-    background-color: #ffd469ea;
+    background-color: #ffa500e0;
     font-weight: bold;
-    font-family: 'Lora', serif !important;
 }
 
-/* Print Styles */
+/* Print */
 @media print {
-    body * {
-        visibility: hidden;
-    }
-    
-    #editor, #editor * {
-        visibility: visible;
-    }
-    
+    body * { visibility: hidden; }
+    #editor, #editor * { visibility: visible; }
     #editor {
         position: absolute;
         left: 0;
@@ -190,9 +147,5 @@
         color: black;
         background: white;
     }
-    
-    #editor mark {
-        background-color: transparent;
-        color: inherit;
-    }
+    #editor mark { background-color: transparent; color: inherit; }
 }

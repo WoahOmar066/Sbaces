@@ -1,6 +1,5 @@
 // Tab Management Functions
 
-// Global variables
 let currentTabId = null;
 let tabs = {};
 let tabCounter = 0;
@@ -18,39 +17,42 @@ let allSbacesVisible = 20;
 let showingAll = false;
 let sbacesBackupDirectory = null;
 
-// Get elements (will be initialized in init.js)
 let editor, content, toolBtns, placeholder, pageTitle, starredSection;
 let starredSpaces, recentSpaces, sidebar, layout, homeBtn, wordCharCount;
 let autoSaveIndicator, downloadBtn;
 
-// Load all tabs
+const SVG = {
+    page: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>`,
+    star: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+    starFill: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+    pencil: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>`,
+    trash: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>`,
+    options: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>`,
+};
+
 function loadTabs() {
     const savedTabs = localStorage.getItem('editorTabs');
-    const savedActiveTab = localStorage.getItem('activeTabId');
-    
+
     if (savedTabs) {
         tabs = JSON.parse(savedTabs);
         tabCounter = Math.max(...Object.keys(tabs).map(id => parseInt(id.replace('tab_', '')))) + 1 || 0;
     }
-    
+
     if (Object.keys(tabs).length === 0) {
         createNewTab('Untitled');
         return;
     }
-    
+
     renderTabs();
     loadSidebarState();
 }
 
-// Create new tab
 function createNewTab(name = null) {
     const tabId = `tab_${tabCounter++}`;
     const tabName = name || `Space ${Object.keys(tabs).length + 1}`;
-    
-    if (currentTabId) {
-        saveCurrentTab();
-    }
-    
+
+    if (currentTabId) saveCurrentTab();
+
     tabs[tabId] = {
         name: tabName,
         content: '',
@@ -58,68 +60,54 @@ function createNewTab(name = null) {
         lastModified: Date.now(),
         starred: false
     };
-    
+
     localStorage.setItem('editorTabs', JSON.stringify(tabs));
     renderTabs();
     switchToTab(tabId);
-    
-    if (content.classList.contains('home')) {
-        updateHomeContent();
-    }
+
+    if (content.classList.contains('home')) updateHomeContent();
 }
 
-// Save current tab content
 function saveCurrentTab() {
     if (currentTabId && tabs[currentTabId]) {
         tabs[currentTabId].content = editor.innerHTML;
         tabs[currentTabId].lastModified = Date.now();
         localStorage.setItem('editorTabs', JSON.stringify(tabs));
-        
-        if (content.classList.contains('home')) {
-            updateHomeContent();
-        }
+
+        if (content.classList.contains('home')) updateHomeContent();
     }
 }
 
-// Switch to tab
 function switchToTab(tabId) {
-    if (currentTabId) {
-        saveCurrentTab();
-    }
-    
+    if (currentTabId) saveCurrentTab();
+
     currentTabId = tabId;
     localStorage.setItem('activeTabId', tabId);
-    
+
     content.classList.remove('home');
     homeBtn.classList.remove('active');
-    
+
     downloadBtn.style.display = 'block';
-    
+
     editor.innerHTML = tabs[tabId].content || '';
     pageTitle.querySelector('.title-text').textContent = tabs[tabId].name;
     updateUrl(tabs[tabId].name);
-    
-    document.querySelectorAll('.nav-link').forEach(item => {
-        item.classList.remove('active');
-    });
-    
+
+    document.querySelectorAll('.nav-link').forEach(item => item.classList.remove('active'));
+
     const activeTab = document.querySelector(`[data-tab-id="${tabId}"]`);
-    if (activeTab) {
-        activeTab.classList.add('active');
-    }
-    
+    if (activeTab) activeTab.classList.add('active');
+
     setTimeout(() => {
         editor.focus();
-        
+
         const range = document.createRange();
         const selection = window.getSelection();
-        
+
         if (editor.childNodes.length > 0) {
             let lastNode = editor;
-            while (lastNode.lastChild) {
-                lastNode = lastNode.lastChild;
-            }
-            
+            while (lastNode.lastChild) lastNode = lastNode.lastChild;
+
             if (lastNode.nodeType === Node.TEXT_NODE) {
                 range.setStart(lastNode, lastNode.textContent.length);
             } else {
@@ -128,113 +116,80 @@ function switchToTab(tabId) {
         } else {
             range.setStart(editor, 0);
         }
-        
+
         range.collapse(true);
         selection.removeAllRanges();
         selection.addRange(range);
-        
+
         setTimeout(() => {
             document.execCommand('insertText', false, ' ');
-            
             setTimeout(() => {
                 document.execCommand('delete');
-                
-                content.scrollTo({
-                    top: content.scrollHeight,
-                    behavior: 'smooth'
-                });
-                
+                content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
                 checkActiveFormatting();
                 updatePlaceholder();
                 updateWordCharCount();
             }, 1);
         }, 10);
-        
     }, 50);
-    
+
     hideOptionsBar();
     updateHeaderButtons();
 }
 
-// Render all tabs
 function renderTabs() {
     starredSpaces.innerHTML = '';
     recentSpaces.innerHTML = '';
-    
+
     const starredTabs = [];
     const normalTabs = [];
-    
+
     Object.entries(tabs).forEach(([tabId, tab]) => {
-        if (tab.starred) {
-            starredTabs.push([tabId, tab]);
-        } else {
-            normalTabs.push([tabId, tab]);
-        }
+        if (tab.starred) starredTabs.push([tabId, tab]);
+        else normalTabs.push([tabId, tab]);
     });
-    
-    starredTabs.sort((a, b) => {
-        const aModified = a[1].lastModified || a[1].created;
-        const bModified = b[1].lastModified || b[1].created;
-        return bModified - aModified;
-    });
-    
-    normalTabs.sort((a, b) => {
-        const aModified = a[1].lastModified || a[1].created;
-        const bModified = b[1].lastModified || b[1].created;
-        return bModified - aModified;
-    });
-    
+
+    const sortFn = (a, b) => (b[1].lastModified || b[1].created) - (a[1].lastModified || a[1].created);
+    starredTabs.sort(sortFn);
+    normalTabs.sort(sortFn);
+
     starredSection.style.display = starredTabs.length > 0 ? 'block' : 'none';
-    
-    starredTabs.forEach(([tabId, tab]) => {
-        const navItem = createNavItem(tabId, tab, true);
-        starredSpaces.appendChild(navItem);
-    });
-    
-    normalTabs.forEach(([tabId, tab]) => {
-        const navItem = createNavItem(tabId, tab, false);
-        recentSpaces.appendChild(navItem);
-    });
+
+    starredTabs.forEach(([tabId, tab]) => starredSpaces.appendChild(createNavItem(tabId, tab, true)));
+    normalTabs.forEach(([tabId, tab]) => recentSpaces.appendChild(createNavItem(tabId, tab, false)));
 }
 
-// Create navigation item
 function createNavItem(tabId, tab, isStarred) {
     const navItem = document.createElement('div');
     navItem.className = 'nav-item';
-    
-    const iconSrc = isStarred 
-        ? 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fstar5.png&color=ffffff'
-        : 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fpage.png&color=ffffff';
-    
+
+    const iconSvg = isStarred ? SVG.starFill : SVG.page;
+
     navItem.innerHTML = `
-        <a href="#" class="nav-link ${currentTabId === tabId ? 'active' : ''}" data-tab-id="${tabId}" onclick="event.preventDefault(); switchToTab('${tabId}')">
-            <img class="nav-icon" src="${iconSrc}" alt="Space">
+        <button class="nav-link ${currentTabId === tabId ? 'active' : ''}" data-tab-id="${tabId}" onclick="switchToTab('${tabId}')">
+            <span class="nav-icon" style="color:var(--text-muted)">${iconSvg}</span>
             <span class="nav-text">${tab.name}</span>
-        </a>
+        </button>
         <div class="nav-options" onclick="showSpaceOptions(event, '${tabId}')">
-            <img src="https://utils.marifyt.com/icons/options.png" alt="Options">
+            ${SVG.options}
         </div>
     `;
-    
+
     return navItem;
 }
 
-// Toggle star tab
 function toggleStarTab(tabId) {
     if (tabs[tabId]) {
         tabs[tabId].starred = !tabs[tabId].starred;
         localStorage.setItem('editorTabs', JSON.stringify(tabs));
         renderTabs();
         updateHeaderButtons();
-        
-        if (content.classList.contains('home')) {
-            updateHomeContent();
-        }
+
+        if (content.classList.contains('home')) updateHomeContent();
     }
     hideOptionsBar();
 }
 
-// Toggle star for current tab
 function toggleCurrentTabStar() {
     if (currentTabId && tabs[currentTabId]) {
         toggleStarTab(currentTabId);
@@ -242,45 +197,40 @@ function toggleCurrentTabStar() {
     }
 }
 
-// Delete tab
 function deleteTab(tabId) {
-    const tabName = tabs[tabId].name;
-    showDeleteModal(tabId, tabName);
+    showDeleteModal(tabId, tabs[tabId].name);
 }
 
-// Delete current tab
 function deleteCurrentTab() {
     if (currentTabId && tabs[currentTabId]) {
-        const tabName = tabs[currentTabId].name;
-        showDeleteModal(currentTabId, tabName);
+        showDeleteModal(currentTabId, tabs[currentTabId].name);
     }
 }
 
-// Show space options
 function showSpaceOptions(event, tabId) {
     event.preventDefault();
     event.stopPropagation();
-    
+
     hideOptionsBar();
-    
+
     const optionsBar = document.createElement('div');
     optionsBar.className = 'options-bar show';
     optionsBar.innerHTML = `
         <button class="options-item tooltip-bottom" onclick="showRenameModal('${tabId}')" data-tooltip-text="Rename">
-            <img src="https://utils.marifyt.com/icons/edit.png" alt="Edit">
+            ${SVG.pencil}
         </button>
-        <button class="options-item tooltip-bottom" onclick="toggleStarTab('${tabId}')" data-tooltip-text="${tabs[tabId].starred ? 'Unstar' : 'Star'}">
-            <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fstar5.png&color=e09614" alt="Star">
+        <button class="options-item tooltip-bottom" onclick="toggleStarTab('${tabId}')" data-tooltip-text="${tabs[tabId].starred ? 'Unstar' : 'Star'}" style="color:#e09614">
+            ${tabs[tabId].starred ? SVG.starFill : SVG.star}
         </button>
-        <button class="options-item tooltip-bottom" onclick="deleteTab('${tabId}')" data-tooltip-text="Delete">
-            <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Ftrash.png&color=ff3030" alt="Delete">
+        <button class="options-item tooltip-bottom" onclick="deleteTab('${tabId}')" data-tooltip-text="Delete" style="color:var(--danger)">
+            ${SVG.trash}
         </button>
     `;
-    
+
     const optionsBtn = event.target.closest('.nav-options');
     optionsBtn.appendChild(optionsBar);
     currentOptionsBar = optionsBar;
-    
+
     setTimeout(() => {
         document.addEventListener('click', function closeOptionsBar(e) {
             if (!optionsBar.contains(e.target) && !optionsBtn.contains(e.target)) {
@@ -291,25 +241,24 @@ function showSpaceOptions(event, tabId) {
     }, 0);
 }
 
-// Update header buttons
 function updateHeaderButtons() {
     const renameBtn = document.getElementById('renameBtn');
     const starBtn = document.getElementById('starBtn');
     const deleteBtn = document.getElementById('deleteBtn');
     const downloadBtn = document.getElementById('downloadBtn');
-    const starImg = starBtn.querySelector('img');
-    
+    const starBtnIcon = document.getElementById('starBtnIcon');
+
     if (currentTabId && tabs[currentTabId]) {
         renameBtn.style.display = 'block';
         starBtn.style.display = 'block';
         deleteBtn.style.display = 'block';
         downloadBtn.style.display = 'block';
-        
+
         if (tabs[currentTabId].starred) {
-            starImg.src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fstar8-full.png&color=3e3e42';
+            starBtnIcon.setAttribute('fill', 'currentColor');
             starBtn.setAttribute('data-tooltip-text', 'Unstar');
         } else {
-            starImg.src = 'https://utils.marifyt.com/api/assets?image=%2Ficons%2Fstar8-empty.png&color=3e3e42';
+            starBtnIcon.setAttribute('fill', 'none');
             starBtn.setAttribute('data-tooltip-text', 'Star');
         }
     } else {
@@ -320,71 +269,58 @@ function updateHeaderButtons() {
     }
 }
 
-// Toggle sidebar
 function toggleSidebar() {
     sidebarCollapsed = !sidebarCollapsed;
-    const toggleIcon = document.querySelector('.sidebar-toggle-icon');
-    const toggleBtn = document.querySelector('.sidebar-toggle');
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    const toggleBtn = document.getElementById('sidebarToggleBtn');
     const homeBtn = document.querySelector('.home-btn');
     const newSpaceBtn = document.querySelector('.new-space-btn');
     const trashBtn = document.querySelector('.trash-btn');
-    
+    const searchBtn = document.querySelector('.search-sidebar-btn');
+
     if (sidebarCollapsed) {
         sidebar.classList.add('collapsed');
         layout.classList.add('collapsed');
-        toggleIcon.src = 'https://utils.marifyt.com/icons/close-sidebar.png';
+        toggleIcon.setAttribute('data-lucide', 'panel-left-open');
+        lucide.createIcons();
         toggleBtn.setAttribute('data-tooltip-text', 'Expand');
-        
-        homeBtn.classList.add('tooltip-bottom');
-        newSpaceBtn.classList.add('tooltip-bottom');
-        trashBtn.classList.add('tooltip-bottom');
+        [homeBtn, newSpaceBtn, trashBtn, searchBtn].forEach(b => b && b.classList.add('tooltip-bottom'));
     } else {
         sidebar.classList.remove('collapsed');
         layout.classList.remove('collapsed');
-        toggleIcon.src = 'https://utils.marifyt.com/icons/open-sidebar.png';
+        toggleIcon.setAttribute('data-lucide', 'panel-left-close');
+        lucide.createIcons();
         toggleBtn.setAttribute('data-tooltip-text', 'Collapse');
-        
-        homeBtn.classList.remove('tooltip-bottom');
-        newSpaceBtn.classList.remove('tooltip-bottom');
-        trashBtn.classList.remove('tooltip-bottom');
+        [homeBtn, newSpaceBtn, trashBtn, searchBtn].forEach(b => b && b.classList.remove('tooltip-bottom'));
     }
-    
+
     localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
     hideOptionsBar();
 }
 
-// Load sidebar state
 function loadSidebarState() {
     const saved = localStorage.getItem('sidebarCollapsed');
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    const toggleBtn = document.getElementById('sidebarToggleBtn');
+    const homeBtn = document.querySelector('.home-btn');
+    const newSpaceBtn = document.querySelector('.new-space-btn');
+    const trashBtn = document.querySelector('.trash-btn');
+    const searchBtn = document.querySelector('.search-sidebar-btn');
+
     if (saved === 'true') {
         sidebarCollapsed = true;
         sidebar.classList.add('collapsed');
         layout.classList.add('collapsed');
-        const toggleIcon = document.querySelector('.sidebar-toggle-icon');
-        const toggleBtn = document.querySelector('.sidebar-toggle');
-        toggleIcon.src = 'https://utils.marifyt.com/icons/close-sidebar.png';
+        toggleIcon.setAttribute('data-lucide', 'panel-left-open');
+        lucide.createIcons();
         toggleBtn.setAttribute('data-tooltip-text', 'Expand');
-        
-        const homeBtn = document.querySelector('.home-btn');
-        const newSpaceBtn = document.querySelector('.new-space-btn');
-        const trashBtn = document.querySelector('.trash-btn');
-        homeBtn.classList.add('tooltip-bottom');
-        newSpaceBtn.classList.add('tooltip-bottom');
-        trashBtn.classList.add('tooltip-bottom');
+        [homeBtn, newSpaceBtn, trashBtn, searchBtn].forEach(b => b && b.classList.add('tooltip-bottom'));
     } else {
-        const toggleBtn = document.querySelector('.sidebar-toggle');
         toggleBtn.setAttribute('data-tooltip-text', 'Collapse');
-        
-        const homeBtn = document.querySelector('.home-btn');
-        const newSpaceBtn = document.querySelector('.new-space-btn');
-        const trashBtn = document.querySelector('.trash-btn');
-        homeBtn.classList.remove('tooltip-bottom');
-        newSpaceBtn.classList.remove('tooltip-bottom');
-        trashBtn.classList.remove('tooltip-bottom');
+        [homeBtn, newSpaceBtn, trashBtn, searchBtn].forEach(b => b && b.classList.remove('tooltip-bottom'));
     }
 }
 
-// Go home
 function goHome() {
     currentTabId = null;
     editor.innerHTML = '';
@@ -392,20 +328,17 @@ function goHome() {
     content.classList.add('home');
     downloadBtn.style.display = 'none';
     autoSaveIndicator.className = 'auto-save-indicator';
-    
+
     const searchInput = document.getElementById('sbaceSearchInput');
     if (searchInput) {
         searchInput.value = '';
         searchQuery = '';
         filteredTabs = tabs;
     }
-    
-    document.querySelectorAll('.nav-link').forEach(item => {
-        item.classList.remove('active');
-    });
-    
+
+    document.querySelectorAll('.nav-link').forEach(item => item.classList.remove('active'));
     homeBtn.classList.add('active');
-    
+
     updatePlaceholder();
     updateUrl();
     hideOptionsBar();
@@ -415,21 +348,29 @@ function goHome() {
     updateHeaderButtons();
 }
 
-// Open rename modal from header
+function showSearchModal() {
+    goHome();
+    setTimeout(() => {
+        const searchInput = document.getElementById('sbaceSearchInput');
+        if (searchInput) {
+            searchInput.focus();
+            searchInput.select();
+        }
+    }, 50);
+}
+
 function openRenameFromHeader() {
     if (currentTabId && tabs[currentTabId]) {
         showRenameModal(currentTabId);
     }
 }
 
-// Move to trash
 function moveToTrash(tabId) {
     const tab = tabs[tabId];
     if (!tab) return;
-    
+
     const trashData = JSON.parse(localStorage.getItem('trash') || '[]');
-    
-    const trashItem = {
+    trashData.push({
         id: tabId,
         name: tab.name,
         content: tab.content,
@@ -437,28 +378,20 @@ function moveToTrash(tabId) {
         lastModified: tab.lastModified,
         starred: tab.starred,
         deletedAt: Date.now()
-    };
-    
-    trashData.push(trashItem);
+    });
     localStorage.setItem('trash', JSON.stringify(trashData));
 }
 
-// Confirm delete
 function confirmDelete() {
     if (tabToDelete && Object.keys(tabs).length > 1) {
         moveToTrash(tabToDelete);
-        
         delete tabs[tabToDelete];
         localStorage.setItem('editorTabs', JSON.stringify(tabs));
-        
-        if (currentTabId === tabToDelete) {
-            goHome();
-        }
-        
+
+        if (currentTabId === tabToDelete) goHome();
+
         renderTabs();
-        if (content.classList.contains('home')) {
-            updateHomeContent();
-        }
+        if (content.classList.contains('home')) updateHomeContent();
     }
     hideDeleteModal();
 }
