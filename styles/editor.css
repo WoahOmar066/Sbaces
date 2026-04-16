@@ -1,0 +1,198 @@
+/* Editor Container */
+.editor-container {
+    position: relative;
+}
+
+.content.home .editor-container {
+    display: none;
+}
+
+/* Editor Styles */
+#editor {
+    width: 100%;
+    min-height: 400px;
+    color: var(--text-color);
+    padding: 17px;
+    padding-bottom: 100px;
+    margin-bottom: 200px;
+    padding-left: 110px;
+    padding-right: 110px;
+    outline: none;
+    border-radius: 8px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: 'Lora', serif !important;
+    position: relative;
+    caret-color: var(--text-color);
+    zoom: 130%;
+    -webkit-spellcheck: true !important;
+    -webkit-text-decorations-in-effect: auto !important;
+    will-change: contents;
+    -webkit-writing-mode: horizontal-tb;
+    writing-mode: horizontal-tb;
+    text-rendering: optimizeSpeed;
+    -webkit-text-decoration-skip: none;
+    text-decoration-skip: none;
+}
+
+#editor * {
+    font-family: 'Lora', serif !important;
+}
+
+/* Spell Check Styles */
+#editor *::-webkit-spelling-error-decoration {
+    text-decoration: none !important;
+    background-color: #8b00007c !important;
+    padding: 2px 4px !important;
+    border-radius: 4px !important;
+    box-decoration-break: clone !important;
+}
+
+#editor *::-webkit-grammar-error-decoration {
+    text-decoration: none !important;
+    background-color: #8b8b8b48 !important;
+    padding: 2px 4px !important;
+    border-radius: 4px !important;
+    box-decoration-break: clone !important;
+}
+
+#editor *::spelling-error {
+    text-decoration: underline #ff4545bb !important;
+    background-color: #8b000038 !important;
+    padding: 2px 4px !important;
+    border-radius: 4px !important;
+    text-underline-offset: 6px !important;
+}
+
+#editor *::grammar-error {
+    text-decoration: underline #8b8b8bbb !important;
+    background-color: #8b8b8b38 !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    text-underline-offset: 6px !important;
+}
+
+#editor *::-webkit-spelling-error-decoration,
+#editor *::-webkit-grammar-error-decoration {
+    display: none !important;
+}
+
+/* Editor Placeholder */
+.editor-placeholder {
+    position: absolute;
+    top: 17px;
+    left: 110px;
+    color: #777;
+    opacity: 0.8;
+    pointer-events: none;
+    z-index: 1;
+    zoom: 130%;
+    font-family: 'Lora', serif !important;
+}
+
+/* List Styles */
+#editor ol, #editor ul {
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-left: 1.5em !important;
+    display: block;
+    font-family: 'Lora', serif !important;
+}
+
+#editor ol li, #editor ul li {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: list-item;
+    position: relative;
+    font-family: 'Lora', serif !important;
+}
+
+#editor ol li::marker {
+    font-size: inherit;
+}
+
+#editor ul li::marker {
+    font-size: inherit;
+    font-family: 'Lora', serif !important;
+}
+
+#editor ol li p, #editor ul li p {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: 'Lora', serif !important;
+}
+
+#editor > ol, #editor > ul,
+#editor > p {
+    margin-block-start: 0 !important;
+    margin-block-end: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    font-family: 'Lora', serif !important;
+}
+
+#editor ol ol {
+    list-style-type: lower-alpha;
+    font-family: 'Lora', serif !important;
+}
+
+#editor ol ol ol {
+    list-style-type: decimal;
+    font-family: 'Lora', serif !important;
+}
+
+#editor ol ol ol ol {
+    font-family: 'Lora', serif !important;
+    list-style-type: lower-alpha;
+}
+
+#editor:focus {
+    border-color: var(--accent-color);
+    font-family: 'Lora', serif !important;
+}
+
+#editor strong, #editor i {
+    font-family: 'Lora', serif !important;
+}
+
+/* Search Highlighting */
+#editor mark {
+    background-color: #ffd469ea;
+    color: #000;
+    padding: 1px 2px;
+    border-radius: 2px;
+    font-family: 'Lora', serif !important;
+}
+
+#editor mark.current-match {
+    background-color: #ffd469ea;
+    font-weight: bold;
+    font-family: 'Lora', serif !important;
+}
+
+/* Print Styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    #editor, #editor * {
+        visibility: visible;
+    }
+    
+    #editor {
+        position: absolute;
+        left: 0;
+        top: 0;
+        zoom: 100%;
+        padding: 40px;
+        color: black;
+        background: white;
+    }
+    
+    #editor mark {
+        background-color: transparent;
+        color: inherit;
+    }
+}

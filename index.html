@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sbases</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://utils.marifyt.com/css/config.css">
+    <link rel="icon" type="image/x-icon" href="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fedit3.png&color=fff">
+    
+    <!-- Custom Stylesheets -->
+    <link rel="stylesheet" href="styles/variables.css">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/modals.css">
+    <link rel="stylesheet" href="styles/editor.css">
+</head>
+<body>
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-title">Delete Space</div>
+            <div class="modal-message" id="deleteModalMessage">Are you sure you want to delete this space?</div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideDeleteModal()">Cancel</button>
+                <button class="modal-btn danger" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Modal -->
+    <div class="modal-overlay" id="clearModal">
+        <div class="modal-content">
+            <div class="modal-title">Clear Text</div>
+            <div class="modal-message">Are you sure you want to clear all text in this space?</div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideClearModal()">Cancel</button>
+                <button class="modal-btn danger" onclick="confirmClear()">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Space Name Modal -->
+    <div class="modal-overlay" id="spaceNameModal">
+        <div class="modal-content">
+            <div class="modal-title" id="spaceModalTitle">New Space</div>
+            <input type="text" id="spaceNameInput" class="modal-input" placeholder="Space name...">
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideSpaceNameModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="confirmSpaceName()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Find and Replace Modal -->
+    <div class="modal-overlay" id="findReplaceModal">
+        <div class="modal-content">
+            <input type="text" id="findInput" class="modal-input" placeholder="Find...">
+            <div id="findCounter" class="find-counter">0 results</div>
+            <input type="text" id="replaceInput" class="modal-input" placeholder="Replace with..." style="display: none;">
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideFindReplaceModal()">Cancel</button>
+                <button class="modal-btn confirm" id="replaceAllBtn" onclick="replaceAll()" style="display: none;">Replace All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trash Modal -->
+    <div class="modal-overlay" id="trashModal">
+        <div class="modal-content trash-modal">
+            <div class="modal-title">Trash</div>
+            <div id="trashContent" class="trash-content"></div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideTrashModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Confirmation Modal -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal-content">
+            <div class="modal-title">Import Data</div>
+            <div class="modal-message">This will replace all existing data. Are you sure?</div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="hideImportModal()">Cancel</button>
+                <button class="modal-btn danger" onclick="confirmImport()">Import</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download Options Dropdown -->
+    <div id="downloadDropdown" class="download-dropdown">
+        <button class="download-option" onclick="downloadAs('pdf')">
+            <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fpdf.png&color=ff0030" alt="PDF">
+            PDF
+        </button>
+        <button class="download-option" onclick="downloadAs('txt')">
+            <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Ftxt-logo.png&color=6000ff" alt="TXT">
+            TXT
+        </button>
+        <button class="download-option" onclick="downloadAs('md')">
+            <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fmd-logo.png&color=ffc800" alt="Markdown">
+            Markdown
+        </button>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <div class="header-icons">
+        <button class="theme-toggle tooltip-left" onclick="setupBackupDirectory()" data-tooltip-text="Backup Folder">
+            <img class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Ffolder5.png&color=ffffff" width="18" height="18" alt="Setup Folder">
+        </button>
+        <button class="theme-toggle tooltip-bottom" onclick="exportAllData()" data-tooltip-text="Export Data">
+            <img class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Foutbox-full.png&color=ffffff" width="18" height="18" alt="Export">
+        </button>
+        <button class="theme-toggle tooltip-bottom" onclick="importAllData()" data-tooltip-text="Import Data">
+            <img class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Finbox-full.png&color=ffffff" width="18" height="18" alt="Import">
+        </button>
+        <button id="theme-toggle" class="theme-toggle tooltip-bottom" data-tooltip-text="Theme">
+            <img id="theme-icon" class="right-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Flight-full.png&color=ffffff" width="18" height="18" alt="Theme toggle">
+        </button>
+    </div>
+
+    <div class="layout" id="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo-container">
+                <div class="logo-section">
+                    <span class="logo-text font-bricolage-grotesque">Sbaces</span>
+                </div>
+                <button class="sidebar-toggle tooltip-bottom" onclick="toggleSidebar()">
+                    <img class="sidebar-toggle-icon" src="https://utils.marifyt.com/icons/open-sidebar.png" alt="Toggle Sidebar">
+                </button>
+            </div>
+            
+            <div class="sidebar-fixed-buttons">
+                <div class="nav-item">
+                    <button class="home-btn" onclick="goHome()" data-tooltip-text="Home">
+                        <img class="nav-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fhome.png&color=ffffff" alt="Home">
+                        <span class="nav-text">Home</span>
+                    </button>
+                </div>
+                <div class="nav-item">
+                    <button class="new-space-btn" onclick="showNewSpaceModal()" data-tooltip-text="New">
+                        <img class="nav-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fthick_plus.png&color=ffffff" alt="New Space">
+                        <span class="nav-text">New Sbace</span>
+                    </button>
+                </div>
+                <div class="nav-item">
+                    <button class="trash-btn" onclick="showTrashModal()" data-tooltip-text="Trash">
+                        <img class="nav-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Ftrash.png&color=ffffff" alt="Trash">
+                        <span class="nav-text">Trash</span>
+                    </button>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav" id="sidebarNav">
+                <div class="nav-section" id="starredSection" style="display: none;">
+                    <div class="nav-section-header">
+                        <span class="star-icon">★</span>
+                        Starred
+                    </div>
+                    <div id="starredSpaces"></div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-header">Recent</div>
+                    <div id="recentSpaces"></div>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="content" id="content">
+            <div class="content-header" id="pageTitle">
+                <span class="title-text" onclick="openRenameFromHeader()">Select a space</span>
+                <div class="header-actions">
+                    <div class="auto-save-indicator" id="autoSaveIndicator"></div>
+                    <button class="header-btn tooltip-bottom" id="renameBtn" onclick="openRenameFromHeader()" data-tooltip-text="Rename" style="display: none;">
+                        <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fedit.png&color=3e3e42" alt="Rename">
+                    </button>
+                    <button class="header-btn tooltip-bottom" id="starBtn" onclick="toggleCurrentTabStar()" data-tooltip-text="Star" style="display: none;">
+                        <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fstar8-empty.png&color=3e3e42" alt="Star">
+                    </button>
+                    <button class="header-btn tooltip-bottom" id="deleteBtn" onclick="deleteCurrentTab()" data-tooltip-text="Delete" style="display: none;">
+                        <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Ftrash.png&color=3e3e42" alt="Delete">
+                    </button>
+                    <button class="header-btn tooltip-bottom" id="downloadBtn" onclick="showDownloadOptions(event)" data-tooltip-text="Download" style="display: none;">
+                        <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fdownload2.png&color=3e3e42" alt="Download">
+                    </button>
+                </div>
+            </div>
+            
+            <div class="toolbar">
+                <div class="left-tools">
+                    <button class="tool-btn tooltip-bottom" onclick="formatText('bold')" data-tooltip-text="Bold (Ctrl+B)"><img src="https://utils.marifyt.com/icons/bold2.png" alt="Bold"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="formatText('italic')" data-tooltip-text="Italic (Ctrl+I)"><img src="https://utils.marifyt.com/icons/italic2.png" alt="Italic"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="formatText('underline')" data-tooltip-text="Underline (Ctrl+U)"><img src="https://utils.marifyt.com/icons/underline2.png" alt="Underline"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="formatText('orderedList')" data-tooltip-text="Numbered List"><img src="https://utils.marifyt.com/icons/numberedlist2.png" alt="Numbered List"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="formatText('unorderedList')" data-tooltip-text="Bullet List"><img src="https://utils.marifyt.com/icons/bullets2.png" alt="Bullet List"></button>
+                </div>
+                <div class="center-tools">
+                    <div id="wordCharCount" class="word-char-count">Words: 0 | Chars: 0</div>
+                </div>
+                <div class="right-tools">
+                    <button class="tool-btn tooltip-bottom" onclick="toggleQuickFind()" data-tooltip-text="Quick Find (Ctrl+F)"><img src="https://utils.marifyt.com/icons/search2.png" alt="Quick Find"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="showFindReplaceModal()" data-tooltip-text="Find & Replace"><img src="https://utils.marifyt.com/icons/find-replace.png" alt="Find & Replace" style="transform: scaleX(-1);"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="undoAction()" data-tooltip-text="Undo (Ctrl+Z)"><img src="https://utils.marifyt.com/icons/undo2.png" alt="Undo"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="redoAction()" data-tooltip-text="Redo (Ctrl+Y)"><img src="https://utils.marifyt.com/icons/redo2.png" alt="Redo"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="copyText()" data-tooltip-text="Copy"><img src="https://utils.marifyt.com/icons/copy2.png" alt="Copy"></button>
+                    <button class="tool-btn tooltip-bottom" onclick="showClearModal()" data-tooltip-text="Clear"><img src="https://utils.marifyt.com/icons/clear.png" alt="Clear"></button>
+                </div>
+            </div>
+
+            <div class="home-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statCharacters">0</div>
+                        <div class="stat-label font-share-tech">Characters</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statWords">0</div>
+                        <div class="stat-label font-share-tech">Written Words</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statLines">0</div>
+                        <div class="stat-label font-share-tech">Written Lines</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statSpaces">0</div>
+                        <div class="stat-label font-share-tech">Number of Sbaces</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statStorage">0 KB</div>
+                        <div class="stat-label font-share-tech">Local Storage</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value font-bricolage-grotesque" id="statLastVisit">Never</div>
+                        <div class="stat-label font-share-tech">Last Visit</div>
+                    </div>
+                </div>
+
+                <div class="home-section">
+                    <div class="section-header">
+                        <div class="section-title font-bricolage-grotesque">Recent Sbaces</div>
+                    </div>
+                    <div id="recentSbacesContainer"></div>
+                </div>
+
+                <div class="home-section">
+                    <div class="section-header">
+                        <div class="section-title font-bricolage-grotesque" id="allSbacesTitle">All Sbaces</div>
+                        <div class="search-container">
+                            <input type="text" id="sbaceSearchInput" class="sbace-search-input" placeholder="Search sbaces...">
+                            <img class="search-icon" src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fsearch2.png&color=97979f" alt="Search">
+                        </div>
+                        <div class="view-toggle">
+                            <button class="view-btn active tooltip-bottom" data-tooltip-text="Grid View" onclick="toggleAllView('grid')" id="allGridBtn">
+                                <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-mode-tile.png&color=97979f" alt="Grid View">
+                            </button>
+                            <button class="view-btn tooltip-bottom" data-tooltip-text="List View" onclick="toggleAllView('list')" id="allListBtn">
+                                <img src="https://utils.marifyt.com/api/assets?image=%2Ficons%2Fview-mode-list.png&color=97979f" alt="List View">
+                            </button>
+                        </div>
+                    </div>
+                    <div id="allSbacesContainer"></div>
+                    <button class="show-more-btn" id="showMoreBtn" onclick="showMoreSbaces()" style="display: none;">
+                        Show More
+                    </button>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-placeholder" id="editorPlaceholder">Text goes here...</div>
+                <div id="editor" contenteditable="true"></div>
+            </div>
+        </main>
+    </div>
+
+    <div id="quickFindOverlay" class="quick-find-overlay">
+        <div class="quick-find-input-container">
+            <input type="text" id="quickFindInput" class="quick-find-input" placeholder="Search...">
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
+
+    <script src="https://utils.marifyt.com/scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/tabs.js"></script>
+    <script src="scripts/editor.js"></script>
+    <script src="scripts/modals.js"></script>
+    <script src="scripts/init.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+:root {
+    --bg-primary: #141414;
+    --bg-secondary: #1a1a1a;
+    --sidebar-width: 275px;
+    --sidebar-collapsed-width: 50px;
+    --content-width: 1150px;
+    --text-color: #ffffff;
+    --border-color: #2e2e2e;
+    --header-height: 56px;
+    --toolbar-height: 48px;
+    --logo-color: #c0dff0;
+    --toolbar-color: #141414fb;
+    --stat-bg-color: #ffffff;
+    --stat-text-color: #000000;
+}
+
+[data-theme="light"] {
+    --toolbar-color: #fffffffb;
+    --bg-primary: #ffffff;
+    --bg-secondary: #dbdbdb;
+    --text-color: #333333;
+    --border-color: #979797;
+    --stat-bg-color: #000000;
+    --stat-text-color: #ffffff;
+}
+
+[data-theme="light"] .nav-icon,
+[data-theme="light"] #theme-icon,
+[data-theme="light"] .tool-btn img,
+[data-theme="light"] .sidebar-toggle-icon,
+[data-theme="light"] .nav-options img,
+[data-theme="light"] .view-btn.active img,
+[data-theme="light"] .right-icon,
+[data-theme="light"] .header-btn img {
+    filter: invert(0.55);
+}
+
+[data-theme="light"] .options-bar img {
+    filter: invert(0);
+}
+
+[data-theme="light"] .nav-link.active {
+    color: black !important;
+}
+
+[data-theme="light"] .home-btn.active {
+    color: black !important;
+}
+
+[data-theme="light"] .logo-text {
+    color: #000000 !important;
+}
+
+[data-theme="light"] .logo-icon {
+    content: url('https://utils.marifyt.com/api/assets?image=%2Ficons%2Fpage2.png&color=6ab6f0');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'DM Sans', sans-serif !important;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-color);
+    line-height: 1.35;
+    height: 100vh;
+    overflow: hidden;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
